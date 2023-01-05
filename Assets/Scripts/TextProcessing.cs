@@ -11,21 +11,21 @@ using UnityEngine.SceneManagement;
 
 public class TextProcessing : MonoBehaviour
 {
-    
-    [SerializeField] 
-    public NamedAnimancerComponent _Animancer;
-    public NamedAnimancerComponent _Animancertongue;
-    public NamedAnimancerComponent _Animancerbody;
+    public static TextProcessing Instance { get; private set; }
 
-    public NamedAnimancerComponent _Andi;
-    public NamedAnimancerComponent _AndiTongue;
-    public NamedAnimancerComponent _AndiBody;
+    NamedAnimancerComponent _Animancer;
+    NamedAnimancerComponent _Animancertongue;
+    NamedAnimancerComponent _Animancerbody;
 
-    public NamedAnimancerComponent _Aini;
-    public NamedAnimancerComponent _AiniTongue;
-    public NamedAnimancerComponent _AiniBody;
-    public GameObject _AndiModel;
-    public GameObject _AiniModel;
+    [SerializeField] GameObject _AndiModel;
+    [SerializeField] NamedAnimancerComponent _Andi;
+    [SerializeField] NamedAnimancerComponent _AndiTongue;
+    [SerializeField] NamedAnimancerComponent _AndiBody;
+
+    [SerializeField] GameObject _AiniModel;
+    [SerializeField] NamedAnimancerComponent _Aini;
+    [SerializeField] NamedAnimancerComponent _AiniTongue;
+    [SerializeField] NamedAnimancerComponent _AiniBody;
 
     public InputField txtInput;
 
@@ -93,6 +93,7 @@ public class TextProcessing : MonoBehaviour
     private static string DATA_LOCATION_SLANG = "Database/SlangLookup";
 
     public Dictionary<string,AnimationClip> animations = new Dictionary<string,AnimationClip>();
+    public float currentSliderSpeedValue = 0.7f;
 
     #region [JSON Load Handler]
     public void singleLoadTableLookup() {
@@ -101,9 +102,6 @@ public class TextProcessing : MonoBehaviour
     }
 
     public Dictionary<string, Kata> loadTableLookup() {
-        //string jsonData = File.ReadAllText(Application.dataPath + DATA_LOCATION);
-        //string jsonData = File.ReadAllText(Application.persistentDataPath + DATA_LOCATION);
-        
         TextAsset file = Resources.Load(DATA_LOCATION) as TextAsset;
         string jsonData = file.ToString();
 
@@ -135,9 +133,6 @@ public class TextProcessing : MonoBehaviour
     }
 
     public Dictionary<string, Gesture> loadGestureLookup() {
-        //string jsonData = File.ReadAllText(Application.dataPath + DATA_LOCATION_GESTURES);
-        //string jsonData = File.ReadAllText(Application.persistentDataPath + DATA_LOCATION_GESTURES);
-        
         TextAsset file = Resources.Load(DATA_LOCATION_GESTURES) as TextAsset;
         string jsonData = file.ToString();
         
@@ -153,9 +148,6 @@ public class TextProcessing : MonoBehaviour
     }
 
     public Dictionary<string, Gesture> loadGestureLookupAlfabet() {
-        //string jsonData = File.ReadAllText(Application.dataPath + DATA_LOCATION_GESTURES);
-        //string jsonData = File.ReadAllText(Application.persistentDataPath + DATA_LOCATION_GESTURES);
-        
         TextAsset file = Resources.Load(DATA_LOCATION_GESTURES_ALFABET) as TextAsset;
         string jsonData = file.ToString();
         
@@ -171,9 +163,6 @@ public class TextProcessing : MonoBehaviour
     }
 
     public Dictionary<string, Slang> loadSlangLookup() {
-        //string jsonData = File.ReadAllText(Application.dataPath + DATA_LOCATION_SLANG);
-        //string jsonData = File.ReadAllText(Application.persistentDataPath + DATA_LOCATION_SLANG);
-        
         TextAsset file = Resources.Load(DATA_LOCATION_SLANG) as TextAsset;
         string jsonData = file.ToString();
         
@@ -191,70 +180,12 @@ public class TextProcessing : MonoBehaviour
     
     #endregion
 
-    public void Start() {
-        // ApplicationChrome.statusBarState = ApplicationChrome.navigationBarState = ApplicationChrome.States.Visible;
-        _Animancer = _Andi;
-        _Animancertongue = _AndiTongue;
-        _Animancerbody = _AndiBody;
-        Screen.orientation = ScreenOrientation.Portrait;
-
-        // UnityEditor.AssetDatabase.LoadAssetAtPath("Assets/SIBI/", typeof(Motion[]));
-        AnimationClip[] foundObjects = Resources.LoadAll<AnimationClip>("");
-        var clips = Resources.FindObjectsOfTypeAll<AnimationClip>();
-
-
-        // Prepare the animations dictionary
-        foreach (var c in clips) {
-            print(c.name);
-            animations[c.name.ToLowerInvariant()] =  c;
-        }
-
-    }
-
-    void Update()
-    {
-        // if (Input.GetKeyDown(KeyCode.Escape)) {
-        //     using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")){
-        //         using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity")){
-        //             obj_Activity.Call("customBackPressed");
-        //         }
-        //     }
-        // }
-    }
-
-    public float sliderSpeedValue = 0;
-
     public void setSliderSpeedValue(string value){
-        sliderSpeedValue = float.Parse(value);
+        currentSliderSpeedValue = float.Parse(value);
     }
-
-    // public void triggerModel(string model)
-    // {
-        
-    //     if (model == "andi"){
-    //         _Andi.SetActive(true);
-    //         _Aini.SetActive(false);
-    //         // _Animancer = _andi;
-    //     }
-    //     else{   
-    //         _Aini.SetActive(false);
-    //         _Andi.SetActive(true);
-    //         // _Animancer = _aini;
-    //     }
-    // }
-
-    // public void changeAndi()
-    // {
-    //     triggerModel("andi");
-    // }
-    // public void changeAini()
-    // {
-    //     triggerModel("aini");
-    // }
 
     public void triggerModel(string model)
     {
-        
         if (model == "Andi"){
             _AndiModel.SetActive(true);
             _AiniModel.SetActive(false);
@@ -268,46 +199,6 @@ public class TextProcessing : MonoBehaviour
             _Animancer = _Aini;
             _Animancertongue = _AiniTongue;
             _Animancerbody = _AiniBody;
-        }
-    }
-
-    public void changeAndi()
-    {
-        triggerModel("Andi");
-    }
-    public void changeAini()
-    {
-        triggerModel("Aini");
-    }
-
-    public void getInputText() {
-        string rawText = txtInput.text;
-        //Debug.Log(rawText);
-
-        string[] rawToken = tokenizeText(rawText);
-        string[] correctedToken = spellingChecker(rawToken);
-        List<string> komponenKata = deconstructWord(correctedToken);
-        List<string> komponenKata2 = deconstructWord2(correctedToken);
-
-        string output = "";
-        
-        foreach (string kata in komponenKata2) {
-            output += kata + ";";
-            //_Animancer.CrossFade(kata);   
-        }
-        
-        txtOutput.text = output;
-
-        StopAllCoroutines();
-        // Production Mode
-        if(logMode.isOn) {
-            // Enable Logging
-            StartCoroutine(SibiAnimationSequenceLogRotation(komponenKata));
-            StartCoroutine(SibiAnimationSequenceLogRotation2(komponenKata2));
-        } else {
-            StartCoroutine(SibiAnimationSequence(komponenKata));
-            StartCoroutine(SibiAnimationSequence2(komponenKata2));
-            printHeader();
         }
     }
 
@@ -342,181 +233,23 @@ public class TextProcessing : MonoBehaviour
         }
     }
 
-    //TODO: Find out a way to play animation sequence with named animations
-    private IEnumerator CoroutineAnimationSequence(List<string> komponenKata)
+    private void Awake()
     {
-        // Start at the 2nd animation (index [1]) since we are already playing the 1st.
-        foreach (string kata in komponenKata) {
-            // if (kata == "adalah") {
-            //     _Animancer.CrossFade("adalah_2");
-            //     yield return new WaitForSeconds(_Animancer.GetState("adalah_2").Length);
-            // } else {
-                _Animancer.CrossFade(kata);
-                _Animancertongue.CrossFade(kata);
-                // Transform[] ats = _Animancer.GetComponentsInChildren<Transform>();
-                // foreach ( var a in ats) {
-                //     Debug.Log(a);
-                // }
-                yield return new WaitForSeconds(_Animancer.GetState(kata).Length);
-                yield return new WaitForSeconds(_Animancertongue.GetState(kata).Length);
-            //}    
-        }
-        _Animancer.CrossFade("idle");
-        _Animancertongue.CrossFade("idle");
+        Instance = this;
     }
 
-     private IEnumerator CoroutineAnimationSequence2(List<string> komponenKata2)
+    public void Start()
     {
-        // Start at the 2nd animation (index [1]) since we are already playing the 1st.
-        foreach (string kata in komponenKata2) {
-            // if (kata == "adalah") {
-            //     _Animancer.CrossFade("adalah_2");
-            //     yield return new WaitForSeconds(_Animancer.GetState("adalah_2").Length);
-            // } else {
-                _Animancerbody.CrossFade(kata);
-                // Transform[] ats = _Animancer.GetComponentsInChildren<Transform>();
-                // foreach ( var a in ats) {
-                //     Debug.Log(a);
-                // }
-                yield return new WaitForSeconds(_Animancerbody.GetState(kata).Length);
-            //}    
+        triggerModel("Andi");
+
+        AnimationClip[] foundObjects = Resources.LoadAll<AnimationClip>(""); // todo --> cache this on editor. 6k animations bro
+        var clips = Resources.FindObjectsOfTypeAll<AnimationClip>();
+
+        // Prepare the animations dictionary
+        foreach (var c in clips)
+        {
+            animations[c.name.ToLowerInvariant()] = c;
         }
-        _Animancerbody.CrossFade("idle");
-    }
-
-    // Logging 
-    private IEnumerator SibiAnimationSequenceLog(List<string> komponenKata) {
-        var bone = _Animancer.Animator.GetBoneTransform(HumanBodyBones.Spine);
-        var transforms = bone.GetComponentsInChildren<Transform>();
-
-        var bonet = _Animancertongue.Animator.GetBoneTransform(HumanBodyBones.Spine);
-        var transformst = bonet.GetComponentsInChildren<Transform>();
-
-        AnimancerState previousState = _Animancer.CurrentState;
-        AnimancerState previousStatet = _Animancertongue.CurrentState;
-
-        string transformsData = "";
-        string transformsDatat = "";
-
-        foreach (string kata in komponenKata) {
-            var state = _Animancer.CrossFade(kata);
-            var statet = _Animancertongue.CrossFade(kata);
-
-            while(state.Time < state.Length) {
-                yield return null;  
- 
-                // Since there are probably quite a few transforms, use some LogWarnings to clearly separate each frame.
-    
-                if (previousState == null) {
-                    //Debug.LogWarning("Previous State: null");
-                    transformsData += "Previous State: null\n";
-                } else {
-                    //Debug.LogWarning("Previous State: " + previousState.Clip.name + ", Time=" + previousState.Time + ", Weight=" + previousState.Weight);
-                    transformsData += "Previous State: " + previousState.Clip.name + ", Time=" + previousState.Time + ", Weight=" + previousState.Weight + "\n";
-                }
-                
-                //Debug.LogWarning("Current State: " + state.Clip.name + ", Time=" + state.Time + ", Weight=" + state.Weight);
-                transformsData += "Current State: " + state.Clip.name + ", Time=" + state.Time + ", Weight=" + state.Weight + "\n\n";
-
-                foreach (var transform in transforms) {
-                    //Debug.Log(transform + " " + transform.rotation);
-                    
-                    transformsData += transform.name.Replace("mixamorig:", "") + " " + transform.localEulerAngles + "\n";
-                    transformsData += transform.name.Replace("mixamorig:", "") + " " + transform.position + "\n";
-                }
-
-                transformsData += "===================\n\n";
-            }
-
-             while(statet.Time < statet.Length) {
-                yield return null;  
- 
-                // Since there are probably quite a few transforms, use some LogWarnings to clearly separate each frame.
-    
-                if (previousStatet == null) {
-                    //Debug.LogWarning("Previous State: null");
-                    transformsDatat += "Previous State: null\n";
-                } else {
-                    //Debug.LogWarning("Previous State: " + previousState.Clip.name + ", Time=" + previousState.Time + ", Weight=" + previousState.Weight);
-                    transformsDatat += "Previous State: " + previousStatet.Clip.name + ", Time=" + previousStatet.Time + ", Weight=" + previousStatet.Weight + "\n";
-                }
-                
-                //Debug.LogWarning("Current State: " + state.Clip.name + ", Time=" + state.Time + ", Weight=" + state.Weight);
-                transformsDatat += "Current State: " + statet.Clip.name + ", Time=" + statet.Time + ", Weight=" + statet.Weight + "\n\n";
-
-                foreach (var transform in transformst) {
-                    //Debug.Log(transform + " " + transform.rotation);
-                    
-                    transformsDatat += transform.name.Replace("mixamorig:", "") + " " + transform.localEulerAngles + "\n";
-                    transformsDatat += transform.name.Replace("mixamorig:", "") + " " + transform.position + "\n";
-                }
-
-                transformsDatat += "===================\n\n";
-            }            
-
-            previousState = state;
-            previousStatet = statet;
-        }
-
-        string path = Application.dataPath + "/Log.txt";
-        if (!File.Exists(path)) {
-            File.WriteAllText(path, "Transformations Data Log\n");
-        }
-        string date = "Log Date : " + System.DateTime.Now + "\n\n";
-        File.AppendAllText(path, date + transformsData);
-
-        _Animancer.CrossFade("idle");
-        _Animancertongue.CrossFade("idle");
-    }
-
-    private IEnumerator SibiAnimationSequenceLog2(List<string> komponenKata2) {
-        var boneing = _Animancerbody.Animator.GetBoneTransform(HumanBodyBones.Spine);
-        var transformsing = boneing.GetComponentsInChildren<Transform>();
-
-        AnimancerState previousStateing = _Animancerbody.CurrentState;
-
-        string transformsDataing = "";
-
-        foreach (string kata in komponenKata2) {
-            var stateing = _Animancerbody.CrossFade(kata);
-            
-            while(stateing.Time < stateing.Length) {
-                yield return null;  
- 
-                // Since there are probably quite a few transforms, use some LogWarnings to clearly separate each frame.
-    
-                if (previousStateing == null) {
-                    //Debug.LogWarning("Previous State: null");
-                    transformsDataing += "Previous State: null\n";
-                } else {
-                    //Debug.LogWarning("Previous State: " + previousState.Clip.name + ", Time=" + previousState.Time + ", Weight=" + previousState.Weight);
-                    transformsDataing += "Previous State: " + previousStateing.Clip.name + ", Time=" + previousStateing.Time + ", Weight=" + previousStateing.Weight + "\n";
-                }
-                
-                //Debug.LogWarning("Current State: " + state.Clip.name + ", Time=" + state.Time + ", Weight=" + state.Weight);
-                transformsDataing += "Current State: " + stateing.Clip.name + ", Time=" + stateing.Time + ", Weight=" + stateing.Weight + "\n\n";
-
-                foreach (var transforming in transformsing) {
-                    //Debug.Log(transform + " " + transform.rotation);
-                    
-                    transformsDataing += transforming.name.Replace("mixamorig:", "") + " " + transforming.localEulerAngles + "\n";
-                    transformsDataing += transforming.name.Replace("mixamorig:", "") + " " + transforming.position + "\n";
-                }
-
-                transformsDataing += "===================\n\n";
-            }
-
-            previousStateing = stateing;
-        }
-
-        string path = Application.dataPath + "/Log.txt";
-        if (!File.Exists(path)) {
-            File.WriteAllText(path, "Transformations Data Log\n");
-        }
-        string date = "Log Date : " + System.DateTime.Now + "\n\n";
-        File.AppendAllText(path, date + transformsDataing);
-
-        _Animancerbody.CrossFade("idle");
     }
 
     private void printHeader() {
