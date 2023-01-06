@@ -1,13 +1,17 @@
-// Animancer // Copyright 2019 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2022 Kybernetik //
 
 using UnityEngine;
 
 namespace Animancer.Examples
 {
-    /// <summary>
-    /// A simple Inspector slider to control <see cref="Time.timeScale"/>.
-    /// </summary>
-    [AddComponentMenu("Animancer/Examples/Time Scale")]
+    /// <summary>A simple Inspector slider to control <see cref="Time.timeScale"/>.</summary>
+    /// <remarks>
+    /// Documentation: <see href="https://kybernetik.com.au/animancer/docs/examples/basics/scene-setup#time-scale">Time Scale</see>
+    /// </remarks>
+    /// https://kybernetik.com.au/animancer/api/Animancer.Examples/TimeScale
+    /// 
+    [AddComponentMenu(Strings.ExamplesMenuPrefix + "Time Scale")]
+    [HelpURL(Strings.DocsURLs.APIDocumentation + "." + nameof(Examples) + "/" + nameof(TimeScale))]
     public sealed class TimeScale : MonoBehaviour
     {
         /************************************************************************************************************************/
@@ -17,7 +21,7 @@ namespace Animancer.Examples
 
         public float Value
         {
-            get { return _Value; }
+            get => _Value;
             set
             {
                 _Value = value;

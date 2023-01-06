@@ -1,14 +1,15 @@
-// Animancer // Copyright 2019 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2022 Kybernetik //
 
 using UnityEngine;
 
 namespace Animancer.Examples.InverseKinematics
 {
-    /// <summary>
-    /// An object for a character to look at using Inverse Kinematics (IK).
-    /// </summary>
-    [AddComponentMenu("Animancer/Examples/Inverse Kinematics - IK Puppet Look Target")]
-    [HelpURL(Strings.APIDocumentationURL + ".Examples.InverseKinematics/IKPuppetLookTarget")]
+    /// <summary>An object for a character to look at using Inverse Kinematics (IK).</summary>
+    /// <example><see href="https://kybernetik.com.au/animancer/docs/examples/ik/puppet">Puppet</see></example>
+    /// https://kybernetik.com.au/animancer/api/Animancer.Examples.InverseKinematics/IKPuppetLookTarget
+    /// 
+    [AddComponentMenu(Strings.ExamplesMenuPrefix + "Inverse Kinematics - IK Puppet Look Target")]
+    [HelpURL(Strings.DocsURLs.ExampleAPIDocumentation + nameof(InverseKinematics) + "/" + nameof(IKPuppetLookTarget))]
     public sealed class IKPuppetLookTarget : MonoBehaviour
     {
         /************************************************************************************************************************/

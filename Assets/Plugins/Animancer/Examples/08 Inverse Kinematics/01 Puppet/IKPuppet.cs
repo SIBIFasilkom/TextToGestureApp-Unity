@@ -1,4 +1,4 @@
-// Animancer // Copyright 2019 Kybernetik //
+// Animancer // https://kybernetik.com.au/animancer // Copyright 2022 Kybernetik //
 
 #pragma warning disable CS0649 // Field is never assigned to, and will always have its default value.
 
@@ -6,11 +6,12 @@ using UnityEngine;
 
 namespace Animancer.Examples.InverseKinematics
 {
-    /// <summary>
-    /// Demonstrates how to use Unity's Inverse Kinematics (IK) system to move a character's limbs.
-    /// </summary>
-    [AddComponentMenu("Animancer/Examples/Inverse Kinematics - IK Puppet")]
-    [HelpURL(Strings.APIDocumentationURL + ".Examples.InverseKinematics/IKPuppet")]
+    /// <summary>Demonstrates how to use Unity's Inverse Kinematics (IK) system to move a character's limbs.</summary>
+    /// <example><see href="https://kybernetik.com.au/animancer/docs/examples/ik/puppet">Puppet</see></example>
+    /// https://kybernetik.com.au/animancer/api/Animancer.Examples.InverseKinematics/IKPuppet
+    /// 
+    [AddComponentMenu(Strings.ExamplesMenuPrefix + "Inverse Kinematics - IK Puppet")]
+    [HelpURL(Strings.DocsURLs.ExampleAPIDocumentation + nameof(InverseKinematics) + "/" + nameof(IKPuppet))]
     public sealed class IKPuppet : MonoBehaviour
     {
         /************************************************************************************************************************/
@@ -24,8 +25,8 @@ namespace Animancer.Examples.InverseKinematics
 
         private void Awake()
         {
-            // Enable the OnAnimatorIK message.
-            _Animancer.GetLayer(0).ApplyAnimatorIK = true;
+            // Tell Unity that we want it to call OnAnimatorIK for states on this layer:
+            _Animancer.Layers[0].ApplyAnimatorIK = true;
         }
 
         /************************************************************************************************************************/

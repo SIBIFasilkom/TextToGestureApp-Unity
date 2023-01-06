@@ -82,7 +82,6 @@ public class TextProcessing : MonoBehaviour
     }
     #endregion
 
-    public Dictionary<string,AnimationClip> animations = new Dictionary<string,AnimationClip>();
     public float currentSliderSpeedValue = 0.7f;
     public bool currentUseTransition = true;
     public bool currentUseLog = false;
@@ -221,20 +220,8 @@ public class TextProcessing : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
 
-    public void Start()
-    {
         triggerModel("Andi");
-
-        AnimationClip[] foundObjects = Resources.LoadAll<AnimationClip>(""); // todo --> cache this on editor. 6k animations bro
-        var clips = Resources.FindObjectsOfTypeAll<AnimationClip>();
-
-        // Prepare the animations dictionary
-        foreach (var c in clips)
-        {
-            animations[c.name.ToLowerInvariant()] = c;
-        }
     }
 
     private void printHeader() {
@@ -259,7 +246,7 @@ public class TextProcessing : MonoBehaviour
         var bone = _Animancer.Animator.GetBoneTransform(HumanBodyBones.Spine); // animatornya null cuy
         var transforms = bone.GetComponentsInChildren<Transform>();
 
-        AnimancerState previousState = _Animancer.CurrentState;
+        AnimancerState previousState = _Animancer.States.Current;
         AnimancerState state;
 
         float fadeDuration = 0.25f;
@@ -272,7 +259,7 @@ public class TextProcessing : MonoBehaviour
         var bonet = _Animancertongue.Animator.GetBoneTransform(HumanBodyBones.Spine);
         var transformst = bonet.GetComponentsInChildren<Transform>();
 
-        AnimancerState previousStatet = _Animancertongue.CurrentState;
+        AnimancerState previousStatet = _Animancertongue.States.Current;
         AnimancerState statet;
 
         
@@ -294,10 +281,10 @@ public class TextProcessing : MonoBehaviour
         foreach (string kata in komponenKata) {
             if(currentUseTransition) {
                 //Dengan transisi
-                state = _Animancer.CrossFadeFromStart(kata, fadeDuration);
+                state = _Animancer.TryPlay(kata, fadeDuration);
             } else {
                 //Tanpa transisi
-                state = _Animancer.Play(kata);
+                state = _Animancer.TryPlay(kata);
                 state.Time = 0;
             }
 
@@ -326,10 +313,10 @@ public class TextProcessing : MonoBehaviour
 
              if(currentUseTransition) {
                 //Dengan transisi
-                statet = _Animancertongue.CrossFadeFromStart(kata, fadeDuration);
+                statet = _Animancertongue.TryPlay(kata, fadeDuration);
             } else {
                 //Tanpa transisi
-                statet = _Animancertongue.Play(kata);
+                statet = _Animancertongue.TryPlay(kata);
                 statet.Time = 0;
             }
 
@@ -381,8 +368,8 @@ public class TextProcessing : MonoBehaviour
             File.AppendAllText(path2, transformsData2);
         }
 
-        _Animancer.CrossFade("idle");
-        _Animancertongue.CrossFade("idle");
+        _Animancer.TryPlay("idle");
+        _Animancertongue.TryPlay("idle");
     }
 
 
@@ -398,7 +385,7 @@ public class TextProcessing : MonoBehaviour
         var boneing = _Animancerbody.Animator.GetBoneTransform(HumanBodyBones.Spine); // animatornya null cuy
         var transformsing = boneing.GetComponentsInChildren<Transform>();
 
-        AnimancerState previousStateing = _Animancerbody.CurrentState;
+        AnimancerState previousStateing = _Animancerbody.States.Current;
         AnimancerState stateing;
 
         float fadeDuration = 0.25f;
@@ -421,10 +408,10 @@ public class TextProcessing : MonoBehaviour
         foreach (string kata in komponenKata2) {            
             if(currentUseTransition) {
                 //Dengan transisi
-                stateing = _Animancerbody.CrossFadeFromStart(kata, fadeDuration);
+                stateing = _Animancerbody.TryPlay(kata, fadeDuration);
             } else {
                 //Tanpa transisi
-                stateing = _Animancerbody.Play(kata);
+                stateing = _Animancerbody.TryPlay(kata);
                 stateing.Time = 0;
             }
 
@@ -474,7 +461,7 @@ public class TextProcessing : MonoBehaviour
             File.AppendAllText(path2, transformsData2ing);
         }
 
-        _Animancerbody.CrossFade("idle");
+        _Animancerbody.TryPlay("idle");
     }
 
 
@@ -497,10 +484,10 @@ public class TextProcessing : MonoBehaviour
 
 
     private IEnumerator SibiAnimationSequence(List<string> komponenKata) {
-        AnimancerState previousState = _Animancer.CurrentState;
+        AnimancerState previousState = _Animancer.States.Current;
         AnimancerState state;
 
-        AnimancerState previousStatet = _Animancertongue.CurrentState;
+        AnimancerState previousStatet = _Animancertongue.States.Current;
         AnimancerState statet;
 
         // Fade duration increases as the state speed increases
@@ -511,18 +498,18 @@ public class TextProcessing : MonoBehaviour
         foreach (string kata in komponenKata) {
             if(currentUseTransition) {
                 //Dengan transisi
-                state = _Animancer.CrossFadeFromStart(kata, fadeDuration);
+                state = _Animancer.TryPlay(kata, fadeDuration);
                 state.Speed = stateSpeed;
 
-                statet = _Animancertongue.CrossFadeFromStart(kata, fadeDuration);
+                statet = _Animancertongue.TryPlay(kata, fadeDuration);
                 statet.Speed = stateSpeed;
                 
             } else {
                 //Tanpa transisi
-                state = _Animancer.Play(kata);
+                state = _Animancer.TryPlay(kata);
                 state.Time = 0;
 
-                statet = _Animancertongue.Play(kata);
+                statet = _Animancertongue.TryPlay(kata);
                 statet.Time = 0;
             }
 
@@ -537,22 +524,22 @@ public class TextProcessing : MonoBehaviour
         if (currentUseTransition) {
             // Important, also add the state speed and fade duration
             // for transition consistency 
-            state = _Animancer.CrossFadeFromStart("idle", fadeDuration);
+            state = _Animancer.TryPlay("idle", fadeDuration);
             state.Speed = stateSpeed;
 
-            statet = _Animancertongue.CrossFadeFromStart("idle", fadeDuration);
+            statet = _Animancertongue.TryPlay("idle", fadeDuration);
             statet.Speed = stateSpeed;
 
         } else {
-            _Animancer.Play("idle");
-            _Animancertongue.Play("idle");
+            _Animancer.TryPlay("idle");
+            _Animancertongue.TryPlay("idle");
         }
     }
 
 
 
     private IEnumerator SibiAnimationSequence2(List<string> komponenKata2) {
-        AnimancerState previousStateing = _Animancerbody.CurrentState;
+        AnimancerState previousStateing = _Animancerbody.States.Current;
         AnimancerState stateing;
 
         string text = "";
@@ -617,12 +604,12 @@ public class TextProcessing : MonoBehaviour
 
             if(currentUseTransition) {
                 //Dengan transisi
-                stateing = _Animancerbody.CrossFadeFromStart(kata, fadeDuration);
+                stateing = _Animancerbody.TryPlay(kata, fadeDuration);
                 stateing.Speed = stateSpeed;
                 
             } else {
                 //Tanpa transisi
-                stateing = _Animancerbody.Play(kata);
+                stateing = _Animancerbody.TryPlay(kata);
                 stateing.Time = 0;
             }
 
@@ -636,7 +623,7 @@ public class TextProcessing : MonoBehaviour
         if (currentUseTransition) {
             // Important, also add the state speed and fade duration
             // for transition consistency 
-            stateing = _Animancerbody.CrossFadeFromStart("idle", fadeDuration);
+            stateing = _Animancerbody.TryPlay("idle", fadeDuration);
             stateing.Speed = stateSpeed;
 
             using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")){
@@ -646,7 +633,7 @@ public class TextProcessing : MonoBehaviour
             }
 
         } else {
-            _Animancerbody.Play("idle");
+            _Animancerbody.TryPlay("idle");
         }
     }
 
@@ -676,6 +663,7 @@ public class TextProcessing : MonoBehaviour
         }
     }
 
+    #region Text Processing
     public string[] tokenizeText(string input) {
         string[] rawToken = Regex.Split(input, @"[\s\\?]");
         rawToken = rawToken
@@ -1053,4 +1041,5 @@ public class TextProcessing : MonoBehaviour
         words = words.Where(x => !string.IsNullOrEmpty(x)).ToArray();
         return words;
     }
+    #endregion
 }
