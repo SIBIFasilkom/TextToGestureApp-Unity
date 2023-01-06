@@ -13,6 +13,12 @@ public class TextProcessing : MonoBehaviour
 {
     public static TextProcessing Instance { get; private set; }
 
+    private static string DATA_LOCATION_SAMPLE = "/Database/Sample.json";
+    private static string DATA_LOCATION = "Database/TableLookup4";
+    private static string DATA_LOCATION_GESTURES = "Database/GestureLookup";
+    private static string DATA_LOCATION_GESTURES_ALFABET = "Database/GestureLookupAlfabet";
+    private static string DATA_LOCATION_SLANG = "Database/SlangLookup";
+
     NamedAnimancerComponent _Animancer;
     NamedAnimancerComponent _Animancertongue;
     NamedAnimancerComponent _Animancerbody;
@@ -26,16 +32,6 @@ public class TextProcessing : MonoBehaviour
     [SerializeField] NamedAnimancerComponent _Aini;
     [SerializeField] NamedAnimancerComponent _AiniTongue;
     [SerializeField] NamedAnimancerComponent _AiniBody;
-
-    public InputField txtInput;
-
-    public Text txtOutput;
-
-    public Toggle toggleTransisi;
-    public Toggle logMode;
-    public Slider sliderSpeed;
-    
-    public Text txtKalimat;
 
     #region [Objek Kata Berimbuhan]
     [System.Serializable]
@@ -86,14 +82,10 @@ public class TextProcessing : MonoBehaviour
     }
     #endregion
 
-    private static string DATA_LOCATION_SAMPLE = "/Database/Sample.json";
-    private static string DATA_LOCATION = "Database/TableLookup4";
-    private static string DATA_LOCATION_GESTURES = "Database/GestureLookup";
-    private static string DATA_LOCATION_GESTURES_ALFABET = "Database/GestureLookupAlfabet";
-    private static string DATA_LOCATION_SLANG = "Database/SlangLookup";
-
     public Dictionary<string,AnimationClip> animations = new Dictionary<string,AnimationClip>();
     public float currentSliderSpeedValue = 0.7f;
+    public bool currentUseTransition = true;
+    public bool currentUseLog = false;
 
     #region [JSON Load Handler]
     public void singleLoadTableLookup() {
@@ -176,10 +168,9 @@ public class TextProcessing : MonoBehaviour
 
         return tableLookup; 
     }
-
-    
     #endregion
 
+    #region Android Callbacks
     public void setSliderSpeedValue(string value){
         currentSliderSpeedValue = float.Parse(value);
     }
@@ -211,18 +202,11 @@ public class TextProcessing : MonoBehaviour
         List<string> komponenKata = deconstructWord(correctedToken);
         List<string> komponenKata2 = deconstructWord2(correctedToken);
 
-        string output = "";
-        
-        foreach (string kata in komponenKata2) {
-            output += kata + ";";
-            //_Animancer.CrossFade(kata);   
-        }
-        
-        txtOutput.text = output;
+        UITextProcessing.Instance.DebugTextOutput(komponenKata2);
 
         StopAllCoroutines();
         // Production Mode
-        if(logMode.isOn) {
+        if(currentUseLog) {
             // Enable Logging
             StartCoroutine(SibiAnimationSequenceLogRotation(komponenKata));
             StartCoroutine(SibiAnimationSequenceLogRotation2(komponenKata2));
@@ -232,6 +216,7 @@ public class TextProcessing : MonoBehaviour
             printHeader();
         }
     }
+    #endregion
 
     private void Awake()
     {
@@ -271,7 +256,7 @@ public class TextProcessing : MonoBehaviour
     }
 
     private IEnumerator SibiAnimationSequenceLogRotation(List<string> komponenKata) {
-        var bone = _Animancer.Animator.GetBoneTransform(HumanBodyBones.Spine);
+        var bone = _Animancer.Animator.GetBoneTransform(HumanBodyBones.Spine); // animatornya null cuy
         var transforms = bone.GetComponentsInChildren<Transform>();
 
         AnimancerState previousState = _Animancer.CurrentState;
@@ -307,7 +292,7 @@ public class TextProcessing : MonoBehaviour
 
         // Get Data for Every Frame
         foreach (string kata in komponenKata) {
-            if(toggleTransisi.isOn) {
+            if(currentUseTransition) {
                 //Dengan transisi
                 state = _Animancer.CrossFadeFromStart(kata, fadeDuration);
             } else {
@@ -339,7 +324,7 @@ public class TextProcessing : MonoBehaviour
             previousState = state;
 
 
-             if(toggleTransisi.isOn) {
+             if(currentUseTransition) {
                 //Dengan transisi
                 statet = _Animancertongue.CrossFadeFromStart(kata, fadeDuration);
             } else {
@@ -376,7 +361,7 @@ public class TextProcessing : MonoBehaviour
         string path = "";
         string path2 = "";
 
-        if (toggleTransisi.isOn) {
+        if (currentUseTransition) {
             path = Application.dataPath + "/LogRotation.csv";
             path2 = Application.dataPath + "/LogPosition.csv";
         } else {
@@ -410,7 +395,7 @@ public class TextProcessing : MonoBehaviour
 
 
     private IEnumerator SibiAnimationSequenceLogRotation2(List<string> komponenKata2) {
-        var boneing = _Animancerbody.Animator.GetBoneTransform(HumanBodyBones.Spine);
+        var boneing = _Animancerbody.Animator.GetBoneTransform(HumanBodyBones.Spine); // animatornya null cuy
         var transformsing = boneing.GetComponentsInChildren<Transform>();
 
         AnimancerState previousStateing = _Animancerbody.CurrentState;
@@ -434,7 +419,7 @@ public class TextProcessing : MonoBehaviour
 
         // Get Data for Every Frame
         foreach (string kata in komponenKata2) {            
-            if(toggleTransisi.isOn) {
+            if(currentUseTransition) {
                 //Dengan transisi
                 stateing = _Animancerbody.CrossFadeFromStart(kata, fadeDuration);
             } else {
@@ -469,7 +454,7 @@ public class TextProcessing : MonoBehaviour
         string path = "";
         string path2 = "";
 
-        if (toggleTransisi.isOn) {
+        if (currentUseTransition) {
             path = Application.dataPath + "/LogRotation.csv";
             path2 = Application.dataPath + "/LogPosition.csv";
         } else {
@@ -520,11 +505,11 @@ public class TextProcessing : MonoBehaviour
 
         // Fade duration increases as the state speed increases
         // Default is 0.25
-        float fadeDuration = 0.2f / sliderSpeed.value;
-        float stateSpeed = sliderSpeed.value;
+        float fadeDuration = 0.2f / currentSliderSpeedValue;
+        float stateSpeed = currentSliderSpeedValue;
         
         foreach (string kata in komponenKata) {
-            if(toggleTransisi.isOn) {
+            if(currentUseTransition) {
                 //Dengan transisi
                 state = _Animancer.CrossFadeFromStart(kata, fadeDuration);
                 state.Speed = stateSpeed;
@@ -549,7 +534,7 @@ public class TextProcessing : MonoBehaviour
             previousStatet = statet;
         }
 
-        if (toggleTransisi.isOn) {
+        if (currentUseTransition) {
             // Important, also add the state speed and fade duration
             // for transition consistency 
             state = _Animancer.CrossFadeFromStart("idle", fadeDuration);
@@ -575,8 +560,8 @@ public class TextProcessing : MonoBehaviour
 
         // Fade duration increases as the state speed increases
         // Default is 0.25
-        float fadeDuration = 0.25f / sliderSpeed.value;
-        float stateSpeed = sliderSpeed.value;
+        float fadeDuration = 0.25f / currentSliderSpeedValue;
+        float stateSpeed = currentSliderSpeedValue;
 
         int idx = 0;
         
@@ -608,7 +593,7 @@ public class TextProcessing : MonoBehaviour
                     text+=" "+str;
                 }
             }
-            txtKalimat.text = text;
+            UITextProcessing.Instance.SendTextResultToUI(text);
 
             text = "";
 
@@ -630,7 +615,7 @@ public class TextProcessing : MonoBehaviour
 
             idx +=1;
 
-            if(toggleTransisi.isOn) {
+            if(currentUseTransition) {
                 //Dengan transisi
                 stateing = _Animancerbody.CrossFadeFromStart(kata, fadeDuration);
                 stateing.Speed = stateSpeed;
@@ -648,13 +633,11 @@ public class TextProcessing : MonoBehaviour
             previousStateing = stateing;
         }
 
-        if (toggleTransisi.isOn) {
+        if (currentUseTransition) {
             // Important, also add the state speed and fade duration
             // for transition consistency 
             stateing = _Animancerbody.CrossFadeFromStart("idle", fadeDuration);
             stateing.Speed = stateSpeed;
-
-            txtKalimat.text = "";
 
             using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer")){
                 using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity")){
@@ -671,7 +654,7 @@ public class TextProcessing : MonoBehaviour
     {
         StopAllCoroutines();
         // Production Mode
-        if(logMode.isOn) {
+        if(currentUseLog) {
             // Enable Logging
             StartCoroutine(SibiAnimationSequenceLogRotation(komponenKata));
         } else {
@@ -684,7 +667,7 @@ public class TextProcessing : MonoBehaviour
     {
         StopAllCoroutines();
         // Production Mode
-        if(logMode.isOn) {
+        if(currentUseLog) {
             // Enable Logging
             StartCoroutine(SibiAnimationSequenceLogRotation2(komponenKata2));
         } else {

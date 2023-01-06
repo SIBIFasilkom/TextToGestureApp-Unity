@@ -399,8 +399,8 @@ RectTransform:
   m_Father: {fileID: 2124963548}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -785,6 +785,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ebeeabfd65923c478ec8983bb8346b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_textResult: {fileID: 2119124348}
+  m_editorDebugMode: 0
+  m_debugUI: {fileID: 990095227}
+  m_sliderSpeed: {fileID: 1189729134}
+  m_toggleTransition: {fileID: 515549708}
+  m_toggleLog: {fileID: 1750706682}
+  m_textDebug: {fileID: 385595635}
 --- !u!1 &377168707
 GameObject:
   m_ObjectHideFlags: 0
@@ -2085,19 +2092,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 1
 --- !u!224 &515549709
 RectTransform:
@@ -7159,7 +7154,6 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
-  - component: {fileID: 963194229}
   - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
@@ -7234,18 +7228,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!114 &963194229
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ebeeabfd65923c478ec8983bb8346b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7429,7 +7411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &990095228
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12710,7 +12692,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -12837,19 +12819,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_IsOn: 0
 --- !u!1 &1793266334
 GameObject:
@@ -14058,13 +14028,9 @@ MonoBehaviour:
   _Aini: {fileID: 2124010809}
   _AiniTongue: {fileID: 504436633}
   _AiniBody: {fileID: 1571503736}
-  txtInput: {fileID: 1436905023}
-  txtOutput: {fileID: 385595635}
-  toggleTransisi: {fileID: 515549708}
-  logMode: {fileID: 1750706682}
-  sliderSpeed: {fileID: 1189729134}
-  txtKalimat: {fileID: 2119124348}
   currentSliderSpeedValue: 0.7
+  currentUseTransition: 1
+  currentUseLog: 0
 --- !u!4 &1912794263
 Transform:
   m_ObjectHideFlags: 0
@@ -14337,7 +14303,7 @@ GameObject:
   - component: {fileID: 2119124349}
   - component: {fileID: 2119124348}
   m_Layer: 5
-  m_Name: Text Kalimat
+  m_Name: Text Result
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

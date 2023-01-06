@@ -14,11 +14,15 @@ public class UITextProcessing : MonoBehaviour
 {
     public static UITextProcessing Instance { get; private set; }
 
+    [SerializeField] Text m_textResult;
+
+    [Header("Debug Mode")]
+    [SerializeField] bool m_editorDebugMode = false;
     [SerializeField] GameObject m_debugUI;
     [SerializeField] Slider m_sliderSpeed;
-
-    [SerializeField] Text m_textKalimat;
-    public Text textKalimat { get { return m_textKalimat; } }
+    [SerializeField] Toggle m_toggleTransition;
+    [SerializeField] Toggle m_toggleLog;
+    [SerializeField] Text m_textDebug;
 
     CharacterNames m_currentChar = CharacterNames.Andi;
 
@@ -33,10 +37,25 @@ public class UITextProcessing : MonoBehaviour
         TextProcessing.Instance.triggerModel(m_currentChar.ToString());
     }
 
-    public void SpeedSliderOnChange(Slider sliderSpeed)
+    public void SendTextResultToUI(string resultText)
     {
-        TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+        m_textResult.text = resultText;
     }
+
+    public void DebugTextOutput(List<string> words)
+    {
+        if(m_editorDebugMode)
+        {
+            string output = "";
+
+            foreach (string word in words)
+            {
+                output += word + ";";
+            }
+
+            m_textDebug.text = output;
+        }
+    } 
 
     private void Awake()
     {
@@ -45,20 +64,20 @@ public class UITextProcessing : MonoBehaviour
 
     private void Update()
     {
-#if UNITY_EDITOR
-        m_debugUI.gameObject.SetActive(true);
-        m_sliderSpeed.value = TextProcessing.Instance.currentSliderSpeedValue;
-#endif
-    }
+        if(m_editorDebugMode)
+        {
+            m_debugUI.gameObject.SetActive(true);
+            TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+            TextProcessing.Instance.currentUseTransition = m_toggleTransition.isOn;
+            TextProcessing.Instance.currentUseLog = m_toggleLog.isOn;
 
-    //public void Update()
-    //{
-    //    if(Input.GetKeyDown(KeyCode.Escape))
-    //    {
-    //        if (SceneManager.GetActiveScene().buildIndex == 0)
-    //            Application.Quit();
-    //        else
-    //            SceneManager.LoadScene(0);
-    //    }
-    //}
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (SceneManager.GetActiveScene().buildIndex == 0)
+                    Application.Quit();
+                else
+                    SceneManager.LoadScene(0);
+            }
+        }
+    }
 }
