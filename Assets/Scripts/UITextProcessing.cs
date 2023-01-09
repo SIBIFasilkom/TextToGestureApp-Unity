@@ -37,9 +37,47 @@ public class UITextProcessing : MonoBehaviour
         TextProcessing.Instance.triggerModel(m_currentChar.ToString());
     }
 
-    public void SendTextResultToUI(string resultText)
+    public void SendTextResultToUI(int idx, List<string> komponenKata2)
     {
-        m_textResult.text = resultText;
+        string text = "";
+        for (int i = 0; i < komponenKata2.Count; i++)
+        {
+            string str = "";
+
+            if (komponenKata2.Count > 1)
+            {
+                if (komponenKata2[i].Length > 1)
+                {
+                    if (i == 0)
+                    {
+                        str = char.ToUpper(komponenKata2[i][0]) + komponenKata2[i].Substring(1);
+                    }
+                    else
+                    {
+                        str = komponenKata2[i];
+                    }
+                }
+                else
+                {
+                    str = komponenKata2[i];
+                }
+            }
+            else
+            {
+                str = komponenKata2[i];
+            }
+
+            if (idx == i)
+            {
+                text += " <color=#955BA5>" + str + "</color>";
+            }
+            else
+            {
+                text += " " + str;
+            }
+        }
+
+        m_textResult.text = text;
     }
 
     public void DebugTextOutput(List<string> words)
