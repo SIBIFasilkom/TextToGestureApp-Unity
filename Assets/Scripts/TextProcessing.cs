@@ -33,6 +33,146 @@ public class TextProcessing : MonoBehaviour
     [SerializeField] NamedAnimancerComponent _AiniTongue;
     [SerializeField] NamedAnimancerComponent _AiniBody;
 
+    public float currentSliderSpeedValue = 0.7f;
+    public bool currentUseTransition = true;
+    public bool currentUseLog = false;
+
+    #region Android Callbacks
+    /**
+     * <summary>Unused, will not change anything because this function need Animancer Pro</summary>
+     * <param name="value">Speed multiplier</param>
+     */
+    public void setSliderSpeedValue(string value)
+    {
+        currentSliderSpeedValue = float.Parse(value);
+    }
+
+    public void triggerModel(string model)
+    {
+        if (model == "Andi")
+        {
+            _AndiModel.SetActive(true);
+            _AiniModel.SetActive(false);
+            _Animancer = _Andi;
+            _Animancertongue = _AndiTongue;
+            _Animancerbody = _AndiBody;
+        }
+        else
+        {
+            _AndiModel.SetActive(false);
+            _AiniModel.SetActive(true);
+            _Animancer = _Aini;
+            _Animancertongue = _AiniTongue;
+            _Animancerbody = _AiniBody;
+        }
+    }
+
+    public void getInputFromAndroid(string text)
+    {
+        string rawText = text;
+
+        string[] rawToken = tokenizeText(rawText);
+        string[] correctedToken = spellingChecker(rawToken);
+        List<string> komponenKata = deconstructWord(correctedToken);
+        List<string> komponenKata2 = deconstructWord2(correctedToken);
+
+        UITextProcessing.Instance.DebugTextOutput(komponenKata2);
+
+        StopAllCoroutines();
+        StartCoroutine(_SibiAnimationSequence(komponenKata));
+        StartCoroutine(_SibiAnimationSequence2(komponenKata2));
+    }
+    #endregion
+
+    #region Unity Callbacks
+    private void Awake()
+    {
+        Instance = this;
+
+        triggerModel("Andi");
+    }
+    #endregion
+
+    // head and tongue
+    private IEnumerator _SibiAnimationSequence(List<string> komponenKata)
+    {
+        AnimancerState previousState = _Animancer.States.Current;
+        AnimancerState state;
+
+        AnimancerState previousStatet = _Animancertongue.States.Current;
+        AnimancerState statet;
+
+        // Fade duration increases as the state speed increases
+        // Default is 0.25
+        // Because it's Animancer pro only : fade duration must be 0.25f / 0.0f & state speed must be 1.0f
+        float fadeDuration = (currentUseTransition) ? 0.25f : 0.0f;
+        float stateSpeed = 1.0f;
+
+        foreach (string kata in komponenKata)
+        {
+            state = _Animancer.TryPlay(kata, fadeDuration);
+            state.Speed = stateSpeed;
+
+            statet = _Animancertongue.TryPlay(kata, fadeDuration);
+            statet.Speed = stateSpeed;
+
+            while (state.Time < state.Length)
+            {
+                yield return null;
+            }
+
+            previousState = state;
+            previousStatet = statet;
+        }
+
+        // Important, also add the state speed and fade duration
+        // for transition consistency 
+        state = _Animancer.TryPlay("idle", fadeDuration);
+        state.Speed = stateSpeed;
+
+        statet = _Animancertongue.TryPlay("idle", fadeDuration);
+        statet.Speed = stateSpeed;
+    }
+
+    // body only
+    private IEnumerator _SibiAnimationSequence2(List<string> komponenKata2)
+    {
+        AnimancerState previousStateing = _Animancerbody.States.Current;
+        AnimancerState stateing;
+
+        // Fade duration increases as the state speed increases
+        // Default is 0.25
+        // Because it's Animancer pro only : fade duration must be 0.25f & state speed must be 1.0f
+        float fadeDuration = (currentUseTransition) ? 0.25f : 0.0f;
+        float stateSpeed = 1.0f;
+
+        int idx = 0;
+
+        foreach (string kata in komponenKata2)
+        {            
+            UITextProcessing.Instance.SendTextResultToUI(idx, komponenKata2);
+
+            idx += 1;
+
+            stateing = _Animancerbody.TryPlay(kata, fadeDuration);
+            stateing.Speed = stateSpeed;
+
+            while (stateing.Time < stateing.Length)
+            {
+                yield return null;
+            }
+
+            previousStateing = stateing;
+        }
+
+        stateing = _Animancerbody.TryPlay("idle", fadeDuration);
+        stateing.Speed = stateSpeed;
+    }
+
+
+
+
+
     #region [Objek Kata Berimbuhan]
     [System.Serializable]
     public class Kata
@@ -88,10 +228,6 @@ public class TextProcessing : MonoBehaviour
 
     }
     #endregion
-
-    public float currentSliderSpeedValue = 0.7f;
-    public bool currentUseTransition = true;
-    public bool currentUseLog = false;
 
     #region [JSON Load Handler]
     public void singleLoadTableLookup()
@@ -187,170 +323,6 @@ public class TextProcessing : MonoBehaviour
         return tableLookup;
     }
     #endregion
-
-    #region Android Callbacks
-    public void setSliderSpeedValue(string value)
-    {
-        currentSliderSpeedValue = float.Parse(value);
-    }
-
-    public void triggerModel(string model)
-    {
-        if (model == "Andi")
-        {
-            _AndiModel.SetActive(true);
-            _AiniModel.SetActive(false);
-            _Animancer = _Andi;
-            _Animancertongue = _AndiTongue;
-            _Animancerbody = _AndiBody;
-        }
-        else
-        {
-            _AndiModel.SetActive(false);
-            _AiniModel.SetActive(true);
-            _Animancer = _Aini;
-            _Animancertongue = _AiniTongue;
-            _Animancerbody = _AiniBody;
-        }
-    }
-
-    // To be called by Android
-    public void getInputFromAndroid(string text)
-    {
-        string rawText = text;
-
-        string[] rawToken = tokenizeText(rawText);
-        string[] correctedToken = spellingChecker(rawToken);
-        List<string> komponenKata = deconstructWord(correctedToken);
-        List<string> komponenKata2 = deconstructWord2(correctedToken);
-
-        UITextProcessing.Instance.DebugTextOutput(komponenKata2);
-
-        StopAllCoroutines();
-        StartCoroutine(SibiAnimationSequence(komponenKata));
-        StartCoroutine(SibiAnimationSequence2(komponenKata2));
-    }
-    #endregion
-
-    #region Unity Callbacks
-    private void Awake()
-    {
-        Instance = this;
-
-        triggerModel("Andi");
-    }
-    #endregion
-
-    // head and tongue
-    private IEnumerator SibiAnimationSequence(List<string> komponenKata)
-    {
-        AnimancerState previousState = _Animancer.States.Current;
-        AnimancerState state;
-
-        AnimancerState previousStatet = _Animancertongue.States.Current;
-        AnimancerState statet;
-
-        // Fade duration increases as the state speed increases
-        // Default is 0.25
-        // Because it's Animancer pro only : fade duration must be 0.25f / 0.0f & state speed must be 1.0f
-        float fadeDuration = (currentUseTransition) ? 0.25f : 0.0f;
-        float stateSpeed = 1.0f;
-
-        foreach (string kata in komponenKata)
-        {
-            state = _Animancer.TryPlay(kata, fadeDuration);
-            state.Speed = stateSpeed;
-
-            statet = _Animancertongue.TryPlay(kata, fadeDuration);
-            statet.Speed = stateSpeed;
-
-            while (state.Time < state.Length)
-            {
-                yield return null;
-            }
-
-            previousState = state;
-            previousStatet = statet;
-        }
-
-        // Important, also add the state speed and fade duration
-        // for transition consistency 
-        state = _Animancer.TryPlay("idle", fadeDuration);
-        state.Speed = stateSpeed;
-
-        statet = _Animancertongue.TryPlay("idle", fadeDuration);
-        statet.Speed = stateSpeed;
-    }
-
-    // body only
-    private IEnumerator SibiAnimationSequence2(List<string> komponenKata2)
-    {
-        AnimancerState previousStateing = _Animancerbody.States.Current;
-        AnimancerState stateing;
-
-        // Fade duration increases as the state speed increases
-        // Default is 0.25
-        // Because it's Animancer pro only : fade duration must be 0.25f & state speed must be 1.0f
-        float fadeDuration = (currentUseTransition) ? 0.25f : 0.0f;
-        float stateSpeed = 1.0f;
-
-        int idx = 0;
-
-        foreach (string kata in komponenKata2)
-        {            
-            UITextProcessing.Instance.SendTextResultToUI(idx, komponenKata2);
-
-            if (idx == 0)
-            {
-                // is it possible to delete this?
-                try
-                {
-                    using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-                    {
-                        using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-                        {
-                            obj_Activity.Call("startAnimating", "");
-                        }
-                    }
-                }
-                catch (System.Exception)
-                {
-                }
-            }
-
-            idx += 1;
-
-            stateing = _Animancerbody.TryPlay(kata, fadeDuration);
-            stateing.Speed = stateSpeed;
-
-            while (stateing.Time < stateing.Length)
-            {
-                yield return null;
-            }
-
-            previousStateing = stateing;
-        }
-
-        stateing = _Animancerbody.TryPlay("idle", fadeDuration);
-        stateing.Speed = stateSpeed;
-        if (currentUseTransition)
-        {
-            // is it possible to delete this?
-            try
-            {
-                using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-                {
-                    using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-                    {
-                        obj_Activity.Call("showInput", "");
-                    }
-                }
-            }
-            catch (System.Exception)
-            {
-            }
-        }
-    }
 
     #region Text Processing
     public string[] tokenizeText(string input)

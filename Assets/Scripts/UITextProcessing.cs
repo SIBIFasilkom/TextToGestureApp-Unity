@@ -37,6 +37,21 @@ public class UITextProcessing : MonoBehaviour
         TextProcessing.Instance.triggerModel(m_currentChar.ToString());
     }
 
+    public void DebugTextOutput(List<string> words)
+    {
+        if (m_editorDebugMode)
+        {
+            string output = "";
+
+            foreach (string word in words)
+            {
+                output += word + ";";
+            }
+
+            m_textDebug.text = output;
+        }
+    }
+
     public void SendTextResultToUI(int idx, List<string> komponenKata2)
     {
         string text = "";
@@ -80,21 +95,7 @@ public class UITextProcessing : MonoBehaviour
         m_textResult.text = text;
     }
 
-    public void DebugTextOutput(List<string> words)
-    {
-        if(m_editorDebugMode)
-        {
-            string output = "";
-
-            foreach (string word in words)
-            {
-                output += word + ";";
-            }
-
-            m_textDebug.text = output;
-        }
-    } 
-
+    #region Unity Callbacks
     private void Awake()
     {
         Instance = this;
@@ -118,4 +119,5 @@ public class UITextProcessing : MonoBehaviour
             }
         }
     }
+    #endregion
 }
