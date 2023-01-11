@@ -7290,7 +7290,7 @@ Camera:
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
-  m_AllowMSAA: 0
+  m_AllowMSAA: 1
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -15100,7 +15100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TouchSensitivity_x: 10
-  PinchSensitivity: 0.25
+  PinchSensitivity: 0.025
 --- !u!4 &1979611566
 Transform:
   m_ObjectHideFlags: 0
@@ -15287,6 +15287,7 @@ GameObject:
   - component: {fileID: 2119124347}
   - component: {fileID: 2119124349}
   - component: {fileID: 2119124348}
+  - component: {fileID: 2119124350}
   m_Layer: 5
   m_Name: Text Result
   m_TagString: Untagged
@@ -15327,7 +15328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -15337,10 +15338,10 @@ MonoBehaviour:
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 10
-    m_FontStyle: 0
+    m_FontStyle: 1
     m_BestFit: 1
     m_MinSize: 1
-    m_MaxSize: 14
+    m_MaxSize: 24
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -15356,6 +15357,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2119124346}
   m_CullTransparentMesh: 0
+--- !u!114 &2119124350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119124346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: -1}
+  m_UseGraphicAlpha: 1
 --- !u!1001 &2124010806
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15391,7 +15407,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 7ac4da57bc78ddd4ab0f86557e480d19,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.001000002
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 7ac4da57bc78ddd4ab0f86557e480d19,
         type: 3}
@@ -15401,7 +15417,7 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 7ac4da57bc78ddd4ab0f86557e480d19,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.010999998
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 7ac4da57bc78ddd4ab0f86557e480d19,
         type: 3}
