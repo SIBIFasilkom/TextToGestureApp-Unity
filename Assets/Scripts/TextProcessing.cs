@@ -13,7 +13,6 @@ public class TextProcessing : MonoBehaviour
 {
     public static TextProcessing Instance { get; private set; }
 
-    private static string DATA_LOCATION_SAMPLE = "/Database/Sample.json";
     private static string DATA_LOCATION = "Database/TableLookup4";
     private static string DATA_LOCATION_GESTURES = "Database/GestureLookup";
     private static string DATA_LOCATION_GESTURES_ALFABET = "Database/GestureLookupAlfabet";
@@ -230,12 +229,6 @@ public class TextProcessing : MonoBehaviour
     #endregion
 
     #region [JSON Load Handler]
-    public void singleLoadTableLookup()
-    {
-        string jsonData = File.ReadAllText(Application.dataPath + DATA_LOCATION_SAMPLE);
-        Kata kata = JsonUtility.FromJson<Kata>(jsonData);
-    }
-
     public Dictionary<string, Kata> loadTableLookup()
     {
         TextAsset file = Resources.Load(DATA_LOCATION) as TextAsset;
