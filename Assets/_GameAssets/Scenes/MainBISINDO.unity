@@ -5741,7 +5741,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 7024f91e6a9d55040af6c0c223908de1, type: 2}
   - {fileID: 7400000, guid: 31cb523c7643f534aa146890bd2e6fb6, type: 2}
   - {fileID: 7400000, guid: 8e5aebcd9ff17c3488f7aa37555aa854, type: 2}
-  - {fileID: 7400000, guid: 50b08bf67950dca42845453fd7a40822, type: 2}
+  - {fileID: 7400000, guid: 901d3983bcd78184aa10db321679eb04, type: 2}
   - {fileID: 7400000, guid: b7fdf7b06c3768d4db980201064d0104, type: 2}
   - {fileID: 7400000, guid: 5f9e8faaffc224d44a29b92ba6aeec0d, type: 2}
   - {fileID: 7400000, guid: bc5b728dd00f0da46897fbfa135853fc, type: 2}
@@ -14911,6 +14911,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a879dfbb9d5c6d4c9c12fe069845ed3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Data_Location: {fileID: 4900000, guid: 9f291475622954b26b91888e963bfefd, type: 3}
+  Data_Location_Gestures: {fileID: 4900000, guid: 14d46d12041967e45ade9032bf4625dc,
+    type: 3}
+  Data_Location_Gestures_Alfabet: {fileID: 4900000, guid: 8abba83d1ed2f4cd799e7a6a06421f1f,
+    type: 3}
+  Data_Location_Slang: {fileID: 4900000, guid: 9ff1c905125d9de4e9e8b32a1fe429ab, type: 3}
   _AndiModel: {fileID: 193368233}
   _Andi: {fileID: 1811213768}
   _AndiTongue: {fileID: 777939287}

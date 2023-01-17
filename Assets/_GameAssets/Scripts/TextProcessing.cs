@@ -13,15 +13,13 @@ public class TextProcessing : MonoBehaviour
 {
     public static TextProcessing Instance { get; private set; }
 
-    private static string DATA_LOCATION = "Database/TableLookup4";
-    private static string DATA_LOCATION_GESTURES = "Database/GestureLookup";
-    private static string DATA_LOCATION_GESTURES_ALFABET = "Database/GestureLookupAlfabet";
-    private static string DATA_LOCATION_SLANG = "Database/SlangLookup";
+    [Header("Database")]
+    [SerializeField] TextAsset Data_Location;
+    [SerializeField] TextAsset Data_Location_Gestures;
+    [SerializeField] TextAsset Data_Location_Gestures_Alfabet;
+    [SerializeField] TextAsset Data_Location_Slang;
 
-    NamedAnimancerComponent _Animancer;
-    NamedAnimancerComponent _Animancertongue;
-    NamedAnimancerComponent _Animancerbody;
-
+    [Header("Character")]
     [SerializeField] GameObject _AndiModel;
     [SerializeField] NamedAnimancerComponent _Andi;
     [SerializeField] NamedAnimancerComponent _AndiTongue;
@@ -32,6 +30,11 @@ public class TextProcessing : MonoBehaviour
     [SerializeField] NamedAnimancerComponent _AiniTongue;
     [SerializeField] NamedAnimancerComponent _AiniBody;
 
+    NamedAnimancerComponent _Animancer;
+    NamedAnimancerComponent _Animancertongue;
+    NamedAnimancerComponent _Animancerbody;
+
+    [Header("Current Variables")]
     public float currentSliderSpeedValue = 0.7f;
     public bool currentUseTransition = true;
     public bool currentUseLog = false;
@@ -78,8 +81,8 @@ public class TextProcessing : MonoBehaviour
         UITextProcessing.Instance.DebugTextOutput(komponenKata2);
 
         StopAllCoroutines();
-        StartCoroutine(_SibiAnimationSequence(komponenKata));
-        StartCoroutine(_SibiAnimationSequence2(komponenKata2));
+        StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { _Animancer, _Animancertongue }, komponenKata));
+        StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { _Animancerbody }, komponenKata2, true));
     }
     #endregion
 
@@ -92,84 +95,42 @@ public class TextProcessing : MonoBehaviour
     }
     #endregion
 
-    // head and tongue
-    private IEnumerator _SibiAnimationSequence(List<string> komponenKata)
+    private IEnumerator _SibiAnimationSequence(NamedAnimancerComponent[] animancers, List<string> komponenKata,  bool sendToUI = false)
     {
-        AnimancerState previousState = _Animancer.States.Current;
-        AnimancerState state;
-
-        AnimancerState previousStatet = _Animancertongue.States.Current;
-        AnimancerState statet;
-
-        // Fade duration increases as the state speed increases
-        // Default is 0.25
-        // Because it's Animancer pro only : fade duration must be 0.25f / 0.0f & state speed must be 1.0f
         float fadeDuration = (currentUseTransition) ? 0.25f : 0.0f;
         float stateSpeed = 1.0f;
+        int idx = 0;
+
+        AnimancerState state = animancers[0].States.Current;
 
         foreach (string kata in komponenKata)
         {
-            state = _Animancer.TryPlay(kata, fadeDuration);
-            state.Speed = stateSpeed;
+            if(sendToUI)
+            {
+                UITextProcessing.Instance.SendTextResultToUI(idx, komponenKata);
+                idx += 1;
+            }
 
-            statet = _Animancertongue.TryPlay(kata, fadeDuration);
-            statet.Speed = stateSpeed;
+            foreach(NamedAnimancerComponent animancer in animancers)
+            {
+                state = animancer.TryPlay(kata, fadeDuration);
+                state.Speed = stateSpeed;
+            }
 
             while (state.Time < state.Length)
             {
                 yield return null;
             }
-
-            previousState = state;
-            previousStatet = statet;
         }
 
-        // Important, also add the state speed and fade duration
-        // for transition consistency 
-        state = _Animancer.TryPlay("idle", fadeDuration);
-        state.Speed = stateSpeed;
-
-        statet = _Animancertongue.TryPlay("idle", fadeDuration);
-        statet.Speed = stateSpeed;
-    }
-
-    // body only
-    private IEnumerator _SibiAnimationSequence2(List<string> komponenKata2)
-    {
-        AnimancerState previousStateing = _Animancerbody.States.Current;
-        AnimancerState stateing;
-
-        // Fade duration increases as the state speed increases
-        // Default is 0.25
-        // Because it's Animancer pro only : fade duration must be 0.25f & state speed must be 1.0f
-        float fadeDuration = (currentUseTransition) ? 0.25f : 0.0f;
-        float stateSpeed = 1.0f;
-
-        int idx = 0;
-
-        foreach (string kata in komponenKata2)
-        {            
-            UITextProcessing.Instance.SendTextResultToUI(idx, komponenKata2);
-
-            idx += 1;
-
-            stateing = _Animancerbody.TryPlay(kata, fadeDuration);
-            stateing.Speed = stateSpeed;
-
-            while (stateing.Time < stateing.Length)
-            {
-                yield return null;
-            }
-
-            previousStateing = stateing;
+        foreach (NamedAnimancerComponent animancer in animancers)
+        {
+            state = animancer.TryPlay("idle", fadeDuration);
+            state.Speed = stateSpeed;
         }
-
-        stateing = _Animancerbody.TryPlay("idle", fadeDuration);
-        stateing.Speed = stateSpeed;
     }
 
-
-
+    
 
 
     #region [Objek Kata Berimbuhan]
@@ -231,8 +192,7 @@ public class TextProcessing : MonoBehaviour
     #region [JSON Load Handler]
     public Dictionary<string, Kata> loadTableLookup()
     {
-        TextAsset file = Resources.Load(DATA_LOCATION) as TextAsset;
-        string jsonData = file.ToString();
+        string jsonData = Data_Location.ToString();
 
         KataBerimbuhan tempList = JsonUtility.FromJson<KataBerimbuhan>(jsonData);
 
@@ -248,8 +208,7 @@ public class TextProcessing : MonoBehaviour
 
     public List<string> loadAllKata()
     {
-        TextAsset file = Resources.Load(DATA_LOCATION) as TextAsset;
-        string jsonData = file.ToString();
+        string jsonData = Data_Location.ToString();
 
         KataBerimbuhan tempList = JsonUtility.FromJson<KataBerimbuhan>(jsonData);
 
@@ -267,8 +226,7 @@ public class TextProcessing : MonoBehaviour
 
     public Dictionary<string, Gesture> loadGestureLookup()
     {
-        TextAsset file = Resources.Load(DATA_LOCATION_GESTURES) as TextAsset;
-        string jsonData = file.ToString();
+        string jsonData = Data_Location_Gestures.ToString();
 
         GestureDictionary tempList = JsonUtility.FromJson<GestureDictionary>(jsonData);
 
@@ -284,8 +242,7 @@ public class TextProcessing : MonoBehaviour
 
     public Dictionary<string, Gesture> loadGestureLookupAlfabet()
     {
-        TextAsset file = Resources.Load(DATA_LOCATION_GESTURES_ALFABET) as TextAsset;
-        string jsonData = file.ToString();
+        string jsonData = Data_Location_Gestures_Alfabet.ToString();
 
         GestureDictionary tempList = JsonUtility.FromJson<GestureDictionary>(jsonData);
 
@@ -301,8 +258,7 @@ public class TextProcessing : MonoBehaviour
 
     public Dictionary<string, Slang> loadSlangLookup()
     {
-        TextAsset file = Resources.Load(DATA_LOCATION_SLANG) as TextAsset;
-        string jsonData = file.ToString();
+        string jsonData = Data_Location_Slang.ToString();
 
         SlangDictionary tempList = JsonUtility.FromJson<SlangDictionary>(jsonData);
 
