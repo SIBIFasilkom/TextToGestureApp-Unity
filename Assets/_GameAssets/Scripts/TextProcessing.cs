@@ -30,20 +30,18 @@ public class TextProcessing : MonoBehaviour
     [SerializeField] NamedAnimancerComponent _AiniTongue;
     [SerializeField] NamedAnimancerComponent _AiniBody;
 
-    NamedAnimancerComponent _Animancer;
-    NamedAnimancerComponent _Animancertongue;
-    NamedAnimancerComponent _Animancerbody;
-
     [Header("Current Variables")]
-    public float currentSliderSpeedValue = 0.7f;
+    public float currentSliderSpeedValue = 1.0f;
     public bool currentUseTransition = true;
     public bool currentUseLog = false;
 
+    NamedAnimancerComponent m_animancer;
+    NamedAnimancerComponent m_animancerTongue;
+    NamedAnimancerComponent m_animancerBody;
+    Coroutine m_animancerHeadTongueCoroutine;
+    Coroutine m_animancerBodyCoroutine;
+
     #region Android Callbacks
-    /**
-     * <summary>Unused, will not change anything because this function need Animancer Pro</summary>
-     * <param name="value">Speed multiplier</param>
-     */
     public void setSliderSpeedValue(string value)
     {
         currentSliderSpeedValue = float.Parse(value);
@@ -55,17 +53,17 @@ public class TextProcessing : MonoBehaviour
         {
             _AndiModel.SetActive(true);
             _AiniModel.SetActive(false);
-            _Animancer = _Andi;
-            _Animancertongue = _AndiTongue;
-            _Animancerbody = _AndiBody;
+            m_animancer = _Andi;
+            m_animancerTongue = _AndiTongue;
+            m_animancerBody = _AndiBody;
         }
         else
         {
             _AndiModel.SetActive(false);
             _AiniModel.SetActive(true);
-            _Animancer = _Aini;
-            _Animancertongue = _AiniTongue;
-            _Animancerbody = _AiniBody;
+            m_animancer = _Aini;
+            m_animancerTongue = _AiniTongue;
+            m_animancerBody = _AiniBody;
         }
     }
 
@@ -80,9 +78,10 @@ public class TextProcessing : MonoBehaviour
 
         UITextProcessing.Instance.DebugTextOutput(komponenKata2);
 
-        StopAllCoroutines();
-        StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { _Animancer, _Animancertongue }, komponenKata));
-        StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { _Animancerbody }, komponenKata2, true));
+        if (m_animancerHeadTongueCoroutine != null) StopCoroutine(m_animancerHeadTongueCoroutine);
+        if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
+        m_animancerHeadTongueCoroutine = StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, komponenKata));
+        m_animancerBodyCoroutine = StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, komponenKata2, true));
     }
     #endregion
 
@@ -92,6 +91,7 @@ public class TextProcessing : MonoBehaviour
         Instance = this;
 
         triggerModel("Andi");
+        StartCoroutine(_SpeedHandler());
     }
     #endregion
 
@@ -130,7 +130,14 @@ public class TextProcessing : MonoBehaviour
         }
     }
 
-    
+    private IEnumerator _SpeedHandler()
+    {
+        while(true)
+        {
+            Time.timeScale = currentSliderSpeedValue;
+            yield return null;
+        }
+    }
 
 
     #region [Objek Kata Berimbuhan]
