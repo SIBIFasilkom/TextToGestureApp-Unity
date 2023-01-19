@@ -15,13 +15,23 @@ public class UILoadingScreen : MonoBehaviour
 
     private IEnumerator _LoadSceneHandler(string sceneName)
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
         while(!operation.isDone)
         {
-            float progress = Mathf.Clamp01(operation.progress / 0.9f) * 100;
+            int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
             m_loadingText.text = "Tunggu Sebentar\n(" + progress + " %)";
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
+
+        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
+        operation = SceneManager.UnloadSceneAsync("Loading");
+
+        while (!operation.isDone)
+        {
+            yield return null;
+        }
+
+        // panggil show ui
     }
 }
