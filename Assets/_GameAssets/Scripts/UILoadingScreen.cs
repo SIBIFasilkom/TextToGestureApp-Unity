@@ -15,20 +15,20 @@ public class UILoadingScreen : MonoBehaviour
 
     private IEnumerator _LoadSceneHandler(string sceneName)
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
-        while(!operation.isDone)
-        {
-            int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
-            m_loadingText.text = "Tunggu Sebentar\n(" + progress + " %)";
-            yield return null;
-        }
-
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(sceneName));
-        operation = SceneManager.UnloadSceneAsync("Loading");
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        operation.allowSceneActivation = false;
 
         while (!operation.isDone)
         {
+            int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
+            m_loadingText.text = "Tunggu Sebentar\n(" + progress + " %)";
+
+            if (operation.progress >= 0.9f)
+            {
+                print("coy");
+                operation.allowSceneActivation = true;
+            }
+
             yield return null;
         }
 
