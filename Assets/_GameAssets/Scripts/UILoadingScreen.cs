@@ -15,6 +15,9 @@ public class UILoadingScreen : MonoBehaviour
 
     private IEnumerator _LoadSceneHandler(string sceneName)
     {
+        m_loadingText.text = "Tunggu Sebentar";
+        yield return new WaitForSeconds(0.25f);
+
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
 
@@ -25,7 +28,6 @@ public class UILoadingScreen : MonoBehaviour
 
             if (operation.progress >= 0.9f)
             {
-                print("coy");
                 operation.allowSceneActivation = true;
             }
 
