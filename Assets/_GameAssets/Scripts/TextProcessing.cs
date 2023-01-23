@@ -16,7 +16,6 @@ public class TextProcessing : MonoBehaviour
     [Header("Database")]
     [SerializeField] TextAsset Data_Location;
     [SerializeField] TextAsset Data_Location_Gestures;
-    [SerializeField] TextAsset Data_Location_Gestures_Alfabet;
     [SerializeField] TextAsset Data_Location_Slang;
 
     [Header("Character")]
@@ -74,6 +73,7 @@ public class TextProcessing : MonoBehaviour
         string[] rawToken = tokenizeText(rawText);
         string[] correctedToken = spellingChecker(rawToken);
         List<string> komponenKata = deconstructWord(correctedToken);
+        print(komponenKata[0]);
         List<string> komponenKata2 = deconstructWord2(correctedToken);
 
         UITextProcessing.Instance.DebugTextOutput(komponenKata2);
@@ -114,12 +114,15 @@ public class TextProcessing : MonoBehaviour
             foreach(NamedAnimancerComponent animancer in animancers)
             {
                 state = animancer.TryPlay(kata, fadeDuration);
-                state.Speed = stateSpeed;
+                if(state != null) state.Speed = stateSpeed;
             }
 
-            while (state.Time < state.Length)
+            if(state != null)
             {
-                yield return null;
+                while (state.Time < state.Length)
+                {
+                    yield return null;
+                }
             }
         }
 
@@ -163,9 +166,9 @@ public class TextProcessing : MonoBehaviour
     public class Gesture
     {
         public string id;
-        public string jenis1;
-        public string jenis2;
-        public string gerakan;
+        public string jenis1; // unused var
+        public string jenis2; // unused var
+        public string gerakan; // unused var
     }
 
     [System.Serializable]
@@ -247,22 +250,6 @@ public class TextProcessing : MonoBehaviour
         return tableLookup;
     }
 
-    public Dictionary<string, Gesture> loadGestureLookupAlfabet()
-    {
-        string jsonData = Data_Location_Gestures_Alfabet.ToString();
-
-        GestureDictionary tempList = JsonUtility.FromJson<GestureDictionary>(jsonData);
-
-        Dictionary<string, Gesture> tableLookup = new Dictionary<string, Gesture>();
-
-        foreach (Gesture gesture in tempList.listGesture)
-        {
-            tableLookup.Add(gesture.id, gesture);
-        }
-
-        return tableLookup;
-    }
-
     public Dictionary<string, Slang> loadSlangLookup()
     {
         string jsonData = Data_Location_Slang.ToString();
@@ -281,6 +268,12 @@ public class TextProcessing : MonoBehaviour
     #endregion
 
     #region Text Processing
+    /**
+     * <summary>
+     * Tokenization is essentially splitting a phrase, sentence, paragraph, or an entire text document into smaller units
+     * , such as individual words or terms. Each of these smaller units are called tokens.
+     * </summary>
+     */
     public string[] tokenizeText(string input)
     {
         string[] rawToken = Regex.Split(input, @"[\s\\?]");
@@ -291,6 +284,12 @@ public class TextProcessing : MonoBehaviour
         return rawToken;
     }
 
+    /**
+     * <summary>
+     * To correct any slang in a word
+     * Ex. trmksih --> terima kasih
+     * </summary>
+     */
     public string[] spellingChecker(string[] token)
     {
         Dictionary<string, Slang> tableLookup = loadSlangLookup();
@@ -313,9 +312,12 @@ public class TextProcessing : MonoBehaviour
     }
 
 
-    /* 
-        Untuk melakukan dekonstruksi kata ke tabel lookup kata berimbuhan
-    */
+    /**
+     * <summary>
+     * Untuk melakukan dekonstruksi kata ke tabel lookup kata berimbuhan
+     * Ex. Berfungsi --> Ber Fungsi
+     * </summary>
+     */
     public List<string> deconstructWord(string[] token)
     {
         Dictionary<string, Kata> tableLookup = loadTableLookup();
@@ -400,13 +402,15 @@ public class TextProcessing : MonoBehaviour
             }
             else
             {
+                print("MULUT / LIDAH NOT FOUND : " + t);
                 komponenKata.Add(t);
             }
         }
 
-        // foreach (string kata in komponenKata) {
-        //     print(kata);
-        // }
+        //foreach (string kata in komponenKata)
+        //{
+        //    print(kata);
+        //}
 
         List<string> finalKomponen = wordToGesture(komponenKata);
         return finalKomponen;
@@ -516,13 +520,14 @@ public class TextProcessing : MonoBehaviour
             }
             else
             {
+                print("BADAN NOT FOUND : " + t);
                 komponenKata.Add(t);
             }
         }
 
-        // foreach (string kata in komponenKata) {
-        //     print(kata);
-        // }
+         /*foreach (string kata in komponenKata) {
+             print(kata);
+         }*/
 
         List<string> finalKomponen = wordToGesture(komponenKata);
         return finalKomponen;
@@ -531,34 +536,11 @@ public class TextProcessing : MonoBehaviour
     /* 
         Persiapan lookup gerakan, jika tidak ditemukan pecah jadi alfabet
         jika merupakan angka, pecah sesuai digit nya
+        todo --> cek langsung ke animancernya aja daripada lewat table
     */
     public List<string> wordToGesture(List<string> komponenKata)
     {
         Dictionary<string, Gesture> gestureLookup = loadGestureLookup();
-        List<string> finalKomponen = new List<string>();
-
-        foreach (string kata in komponenKata)
-        {
-            if (gestureLookup.ContainsKey(kata))
-            {
-                finalKomponen.Add(kata);
-            }
-            else
-            {
-                string[] split = abjadChecker(kata);
-                foreach (string s in split)
-                {
-                    finalKomponen.Add(s);
-                }
-            }
-        }
-
-        return finalKomponen;
-    }
-
-    public List<string> wordToGestureAlfabet(List<string> komponenKata)
-    {
-        Dictionary<string, Gesture> gestureLookup = loadGestureLookupAlfabet();
         List<string> finalKomponen = new List<string>();
 
         foreach (string kata in komponenKata)

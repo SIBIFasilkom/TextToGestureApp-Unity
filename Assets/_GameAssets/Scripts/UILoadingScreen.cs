@@ -24,7 +24,7 @@ public class UILoadingScreen : MonoBehaviour
         while (!operation.isDone)
         {
             int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
-            m_loadingText.text = "Tunggu Sebentar\n(" + progress + " %)";
+            m_loadingText.text = "Tunggu Sebentar\n<size=12>(" + progress + " %)</size>";
 
             if (operation.progress >= 0.9f)
             {
