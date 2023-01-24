@@ -8,9 +8,28 @@ public class UILoadingScreen : MonoBehaviour
 {
     [SerializeField] TMP_Text m_loadingText;
 
+    #region Adroid Callbacks
+    public void LoadScene(string sceneName)
+    {
+        StartCoroutine(_LoadSceneHandler(sceneName));
+    }
+
+    private void _LoadHasDone()
+    {
+        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            {
+                obj_Activity.Call("loadHasDone", "");
+            }
+        }
+    }
+    #endregion
+
     private void Start()
     {
-        StartCoroutine(_LoadSceneHandler("MainSIBI"));
+        // kedepannya ga pake start, dipanggil dari android studio.
+        LoadScene("MainSIBI");
     }
 
     private IEnumerator _LoadSceneHandler(string sceneName)
@@ -34,6 +53,6 @@ public class UILoadingScreen : MonoBehaviour
             yield return null;
         }
 
-        // panggil show ui
+        //_LoadHasDone();
     }
 }
