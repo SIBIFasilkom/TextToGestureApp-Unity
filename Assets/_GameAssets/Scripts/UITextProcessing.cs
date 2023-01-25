@@ -26,6 +26,47 @@ public class UITextProcessing : MonoBehaviour
 
     CharacterNames m_currentChar = CharacterNames.Andi;
 
+    #region AndroidCallback
+    private void _LoadHasDone()
+    {
+        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        {
+            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            {
+                obj_Activity.Call("loadHasDone", "");
+            }
+        }
+    }
+    #endregion
+
+    #region Unity Callbacks
+    private void Awake()
+    {
+        Instance = this;
+
+        //_LoadHasDone();
+    }
+
+    private void Update()
+    {
+        if(m_editorDebugMode)
+        {
+            m_debugUI.gameObject.SetActive(true);
+            TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+            TextProcessing.Instance.currentUseTransition = m_toggleTransition.isOn;
+            TextProcessing.Instance.currentUseLog = m_toggleLog.isOn;
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (SceneManager.GetActiveScene().buildIndex == 0)
+                    Application.Quit();
+                else
+                    SceneManager.LoadScene(0);
+            }
+        }
+    }
+    #endregion
+
     public void GenerateButton(InputField inputField)
     {
         TextProcessing.Instance.getInputFromAndroid(inputField.text);
@@ -94,30 +135,4 @@ public class UITextProcessing : MonoBehaviour
 
         m_textResult.text = text;
     }
-
-    #region Unity Callbacks
-    private void Awake()
-    {
-        Instance = this;
-    }
-
-    private void Update()
-    {
-        if(m_editorDebugMode)
-        {
-            m_debugUI.gameObject.SetActive(true);
-            TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
-            TextProcessing.Instance.currentUseTransition = m_toggleTransition.isOn;
-            TextProcessing.Instance.currentUseLog = m_toggleLog.isOn;
-
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                if (SceneManager.GetActiveScene().buildIndex == 0)
-                    Application.Quit();
-                else
-                    SceneManager.LoadScene(0);
-            }
-        }
-    }
-    #endregion
 }

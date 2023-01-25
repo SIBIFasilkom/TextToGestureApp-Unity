@@ -13,17 +13,6 @@ public class UILoadingScreen : MonoBehaviour
     {
         StartCoroutine(_LoadSceneHandler(sceneName));
     }
-
-    private void _LoadHasDone()
-    {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
-        {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
-            {
-                obj_Activity.Call("loadHasDone", "");
-            }
-        }
-    }
     #endregion
 
     private void Start()
@@ -52,7 +41,5 @@ public class UILoadingScreen : MonoBehaviour
 
             yield return null;
         }
-
-        //_LoadHasDone();
     }
 }
