@@ -29,12 +29,18 @@ public class UITextProcessing : MonoBehaviour
     #region AndroidCallback
     private void _LoadHasDone()
     {
-        using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+        try
         {
-            using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+            using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
             {
-                obj_Activity.Call("loadHasDone", "");
+                using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                {
+                    obj_Activity.Call("loadHasDone", "");
+                }
             }
+        } catch
+        {
+            m_editorDebugMode = true;
         }
     }
     #endregion
@@ -44,7 +50,7 @@ public class UITextProcessing : MonoBehaviour
     {
         Instance = this;
 
-        //_LoadHasDone();
+        _LoadHasDone();
     }
 
     private void Update()

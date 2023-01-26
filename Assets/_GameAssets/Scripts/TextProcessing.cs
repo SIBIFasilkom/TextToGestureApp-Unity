@@ -73,7 +73,6 @@ public class TextProcessing : MonoBehaviour
         string[] rawToken = tokenizeText(rawText);
         string[] correctedToken = spellingChecker(rawToken);
         List<string> komponenKata = deconstructWord(correctedToken);
-        print(komponenKata[0]);
         List<string> komponenKata2 = deconstructWord2(correctedToken);
 
         UITextProcessing.Instance.DebugTextOutput(komponenKata2);
@@ -402,7 +401,6 @@ public class TextProcessing : MonoBehaviour
             }
             else
             {
-                print("MULUT / LIDAH NOT FOUND : " + t);
                 komponenKata.Add(t);
             }
         }
@@ -520,7 +518,6 @@ public class TextProcessing : MonoBehaviour
             }
             else
             {
-                print("BADAN NOT FOUND : " + t);
                 komponenKata.Add(t);
             }
         }
