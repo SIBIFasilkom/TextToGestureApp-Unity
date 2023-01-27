@@ -26,33 +26,10 @@ public class UITextProcessing : MonoBehaviour
 
     CharacterNames m_currentChar = CharacterNames.Andi;
 
-    #region AndroidCallback
-    private void _LoadHasDone()
-    {
-        try
-        {
-            using (AndroidJavaClass sibi = new AndroidJavaClass("com.fasilkom.app.presentation.player.SIBIPlayerActivity"))
-            {
-                using (AndroidJavaObject sibiInstance = sibi.CallStatic<AndroidJavaObject>("Instance"))
-                {
-                    sibiInstance.Call("LoadHasDone", "");
-                }
-            }
-        }
-        catch (System.Exception e)
-        {
-            print("no android : " + e);
-            m_editorDebugMode = true;
-        }
-    }
-    #endregion
-
     #region Unity Callbacks
     private void Awake()
     {
         Instance = this;
-
-        _LoadHasDone();
     }
 
     private void Update()
