@@ -31,15 +31,17 @@ public class UITextProcessing : MonoBehaviour
     {
         try
         {
-            using (AndroidJavaClass cls_UnityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            using (AndroidJavaClass sibi = new AndroidJavaClass("com.fasilkom.app.presentation.player.SIBIPlayerActivity"))
             {
-                using (AndroidJavaObject obj_Activity = cls_UnityPlayer.GetStatic<AndroidJavaObject>("currentActivity"))
+                using (AndroidJavaObject sibiInstance = sibi.CallStatic<AndroidJavaObject>("Instance"))
                 {
-                    obj_Activity.Call("loadHasDone", "");
+                    sibiInstance.Call("LoadHasDone", "");
                 }
             }
-        } catch
+        }
+        catch (System.Exception e)
         {
+            print("no android : " + e);
             m_editorDebugMode = true;
         }
     }
@@ -55,7 +57,7 @@ public class UITextProcessing : MonoBehaviour
 
     private void Update()
     {
-        if(m_editorDebugMode)
+        if (m_editorDebugMode)
         {
             m_debugUI.gameObject.SetActive(true);
             TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
