@@ -4,12 +4,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public enum CharacterNames
-{
-    Andi,
-    Aini
-}
-
 public class UITextProcessing : MonoBehaviour
 {
     public static UITextProcessing Instance { get; private set; }
@@ -29,6 +23,10 @@ public class UITextProcessing : MonoBehaviour
     #region Unity Callbacks
     private void Awake()
     {
+#if UNITY_EDITOR
+        m_editorDebugMode = true;
+#endif
+
         Instance = this;
     }
 
@@ -50,7 +48,7 @@ public class UITextProcessing : MonoBehaviour
             }
         }
     }
-    #endregion
+#endregion
 
     public void GenerateButton(InputField inputField)
     {

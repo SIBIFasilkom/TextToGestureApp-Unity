@@ -9,9 +9,17 @@ using UnityEngine.UI;
 using Animancer;
 using UnityEngine.SceneManagement;
 
+public enum CharacterNames
+{
+    Andi,
+    Aini
+}
+
 public class TextProcessing : MonoBehaviour
 {
     public static TextProcessing Instance { get; private set; }
+
+    public const string PREF_KEY_CURRENT_CHARACTER = "currentCharacter";
 
     [Header("Database")]
     [SerializeField] TextAsset Data_Location;
@@ -48,22 +56,14 @@ public class TextProcessing : MonoBehaviour
 
     public void triggerModel(string model)
     {
-        if (model == "Andi")
-        {
-            _AndiModel.SetActive(true);
-            _AiniModel.SetActive(false);
-            m_animancer = _Andi;
-            m_animancerTongue = _AndiTongue;
-            m_animancerBody = _AndiBody;
-        }
-        else
-        {
-            _AndiModel.SetActive(false);
-            _AiniModel.SetActive(true);
-            m_animancer = _Aini;
-            m_animancerTongue = _AiniTongue;
-            m_animancerBody = _AiniBody;
-        }
+        PlayerPrefs.SetString(PREF_KEY_CURRENT_CHARACTER, model);
+
+        bool isAndi = model == CharacterNames.Andi.ToString();
+        _AndiModel.SetActive(isAndi);
+        _AiniModel.SetActive(!isAndi);
+        m_animancer = (isAndi) ? _Andi : _Aini;
+        m_animancerTongue = (isAndi) ? _AndiTongue : _AiniTongue;
+        m_animancerBody = (isAndi) ? _AndiBody : _AiniBody;
     }
 
     public void getInputFromAndroid(string text)
@@ -89,7 +89,7 @@ public class TextProcessing : MonoBehaviour
     {
         Instance = this;
 
-        triggerModel("Andi");
+        triggerModel(PlayerPrefs.GetString(PREF_KEY_CURRENT_CHARACTER, CharacterNames.Andi.ToString()));
         StartCoroutine(_SpeedHandler());
     }
     #endregion
