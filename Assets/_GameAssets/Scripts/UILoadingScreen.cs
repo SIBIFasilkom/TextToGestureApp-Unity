@@ -1,12 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UILoadingScreen : MonoBehaviour
 {
-    [SerializeField] TMP_Text m_loadingText;
+    [SerializeField] Text m_loadingText;
 
     #region Adroid Callbacks
     public void LoadScene(string sceneName)
