@@ -295,7 +295,6 @@ public class TextProcessing : MonoBehaviour
         {
             if (tableLookup.ContainsKey(t))
             {
-                Debug.Log("correction occur : " + t + "->" + tableLookup[t].formal);
                 correctedToken.Add(tableLookup[t].formal);
             }
             else

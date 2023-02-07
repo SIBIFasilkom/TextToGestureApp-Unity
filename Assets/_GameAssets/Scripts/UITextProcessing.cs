@@ -20,6 +20,8 @@ public class UITextProcessing : MonoBehaviour
 
     CharacterNames m_currentChar = CharacterNames.Andi;
 
+    Quaternion m_originalCamRotation;
+
     #region Unity Callbacks
     private void Awake()
     {
@@ -28,6 +30,11 @@ public class UITextProcessing : MonoBehaviour
 #endif
 
         Instance = this;
+    }
+
+    private void Start()
+    {
+        m_originalCamRotation = transform.rotation;
     }
 
     private void Update()
@@ -48,7 +55,12 @@ public class UITextProcessing : MonoBehaviour
             }
         }
     }
-#endregion
+
+    private void LateUpdate()
+    {
+        transform.rotation = Camera.main.transform.rotation * m_originalCamRotation;
+    }
+    #endregion
 
     public void GenerateButton(InputField inputField)
     {
