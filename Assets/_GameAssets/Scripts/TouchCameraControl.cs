@@ -9,6 +9,8 @@ public struct Clamp
 
 public class TouchCameraControl : MonoBehaviour
 {
+    [SerializeField] Camera[] m_cameras;
+
     public float TouchSensitivity_x = 0.1f;
     public float TouchSensitivity_y = 0.01f;
     public float PinchSensitivity = 1.0f;
@@ -39,7 +41,8 @@ public class TouchCameraControl : MonoBehaviour
 
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
             float zoom = Camera.main.fieldOfView + deltaMagnitudeDiff * PinchSensitivity * Time.unscaledDeltaTime;
-            Camera.main.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
+            foreach(Camera camera in m_cameras)
+                camera.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
         }
     }
 }
