@@ -14381,7 +14381,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f79335dd99432341bd0da42a768d86e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cameras: []
+  m_cameras:
+  - {fileID: 963194227}
+  - {fileID: 918990592}
   TouchSensitivity_x: 0.1
   TouchSensitivity_y: 0.01
   PinchSensitivity: 1
