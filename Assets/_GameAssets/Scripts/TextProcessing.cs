@@ -306,10 +306,10 @@ public class TextProcessing : MonoBehaviour
         return correctedToken.ToArray();
     }
 
-
     /**
      * <summary>
      * Untuk melakukan dekonstruksi kata ke tabel lookup kata berimbuhan
+     * Deconstruct word yang ini untuk kepala dan lidah, jadinya cuma a i u e o aja
      * Ex. Berfungsi --> Ber Fungsi
      * </summary>
      */
@@ -401,15 +401,17 @@ public class TextProcessing : MonoBehaviour
             }
         }
 
-        //foreach (string kata in komponenKata)
-        //{
-        //    print(kata);
-        //}
-
         List<string> finalKomponen = wordToGesture(komponenKata);
         return finalKomponen;
     }
 
+    /**
+     * <summary>
+     * Untuk melakukan dekonstruksi kata ke tabel lookup kata berimbuhan
+     * Deconstruct word yang ini untuk badan
+     * Ex. Berfungsi --> Ber Fungsi
+     * </summary>
+     */
     public List<string> deconstructWord2(string[] token)
     {
         Dictionary<string, Kata> tableLookup = loadTableLookup();
@@ -517,10 +519,6 @@ public class TextProcessing : MonoBehaviour
                 komponenKata.Add(t);
             }
         }
-
-         /*foreach (string kata in komponenKata) {
-             print(kata);
-         }*/
 
         List<string> finalKomponen = wordToGesture(komponenKata);
         return finalKomponen;
@@ -640,7 +638,7 @@ public class TextProcessing : MonoBehaviour
         {
             strDigit = this.terbilang(num / 100) + " ratus " + this.terbilang(num % 100);
         }
-        else if (num < 2000)
+        else if (num < 2000) // kalo diatas seribu pakenya fungsi splitstring???
         {
             strDigit = " ribu   " + this.terbilang(num - 1000);
         }
@@ -653,7 +651,7 @@ public class TextProcessing : MonoBehaviour
             strDigit = this.terbilang(num / 1000000) + " juta " + this.terbilang(num % 1000000);
         }
 
-        strDigit = System.Text.RegularExpressions.Regex.Replace(strDigit, @"^\s+|\s+$", " ");
+        strDigit = Regex.Replace(strDigit, @"^\s+|\s+$", " ");
 
         return strDigit;
     }
