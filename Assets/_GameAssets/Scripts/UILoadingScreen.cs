@@ -3,42 +3,45 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UILoadingScreen : MonoBehaviour
+namespace FasilkomUI
 {
-    [SerializeField] Text m_loadingText;
-
-    #region Adroid Callbacks
-    public void LoadScene(string sceneName)
+    public class UILoadingScreen : MonoBehaviour
     {
-        StartCoroutine(_LoadSceneHandler(sceneName));
-    }
-    #endregion
+        [SerializeField] Text m_loadingText;
 
-    private void Start()
-    {
-        // kedepannya ga pake start, dipanggil dari android studio.
-        LoadScene("MainSIBI");
-    }
-
-    private IEnumerator _LoadSceneHandler(string sceneName)
-    {
-        m_loadingText.text = "Tunggu Sebentar";
-        yield return new WaitForSeconds(0.25f);
-
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-        operation.allowSceneActivation = false;
-
-        while (!operation.isDone)
+        #region Adroid Callbacks
+        public void LoadScene(string sceneName)
         {
-            int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
-            m_loadingText.text = "Tunggu Sebentar\n<size=12>(" + progress + " %)</size>";
+            StartCoroutine(_LoadSceneHandler(sceneName));
+        }
+        #endregion
 
-            if (operation.progress >= 0.9f)
+        private void Start()
+        {
+            // kedepannya ga pake start, dipanggil dari android studio.
+            LoadScene("MainSIBI");
+        }
+
+        private IEnumerator _LoadSceneHandler(string sceneName)
+        {
+            m_loadingText.text = "Tunggu Sebentar";
+            yield return new WaitForSeconds(0.25f);
+
+            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+            operation.allowSceneActivation = false;
+
+            while (!operation.isDone)
             {
-                operation.allowSceneActivation = true;
-            }
+                int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
+                m_loadingText.text = "Tunggu Sebentar\n<size=12>(" + progress + " %)</size>";
 
-            yield return null;
+                if (operation.progress >= 0.9f)
+                {
+                    operation.allowSceneActivation = true;
+                }
+
+                yield return null;
+            }
         }
     }
 }
