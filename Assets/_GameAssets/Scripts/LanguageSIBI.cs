@@ -8,6 +8,62 @@ using UnityEngine;
 
 namespace FasilkomUI.SIBI
 {
+    #region [Objek Kata Berimbuhan]
+    [System.Serializable]
+    public class Kata
+    {
+        public string id;
+        public string[] awalan;
+        public string[] akhiran;
+        public string[] suku;
+        public string pokok;
+    }
+
+    [System.Serializable]
+    public class KataBerimbuhan
+    {
+        public List<Kata> listKata;
+    }
+    #endregion
+
+    #region [Objek Kata Gesture]
+    [System.Serializable]
+    public class Gesture
+    {
+        public string id;
+        public string jenis1; // unused var
+        public string jenis2; // unused var
+        public string gerakan; // unused var
+    }
+
+    [System.Serializable]
+    public class GestureDictionary
+    {
+        public List<Gesture> listGesture;
+    }
+    #endregion
+
+    #region [Objek Kata Slang]
+    [System.Serializable]
+    public class Slang
+    {
+        public string slang;
+        public string formal;
+    }
+
+    [System.Serializable]
+    public class SlangDictionary
+    {
+        public List<Slang> listSlang;
+    }
+
+    [System.Serializable]
+    public class Frame
+    {
+
+    }
+    #endregion
+
     public class LanguageSIBI : AbstractLanguage
     {
         [Header("Database")]
@@ -29,63 +85,6 @@ namespace FasilkomUI.SIBI
         NamedAnimancerComponent m_animancerBody;
         Coroutine m_animancerHeadTongueCoroutine;
         Coroutine m_animancerBodyCoroutine;
-
-
-        #region [Objek Kata Berimbuhan]
-        [System.Serializable]
-        public class Kata
-        {
-            public string id;
-            public string[] awalan;
-            public string[] akhiran;
-            public string[] suku;
-            public string pokok;
-        }
-
-        [System.Serializable]
-        public class KataBerimbuhan
-        {
-            public List<Kata> listKata;
-        }
-        #endregion
-
-        #region [Objek Kata Gesture]
-        [System.Serializable]
-        public class Gesture
-        {
-            public string id;
-            public string jenis1; // unused var
-            public string jenis2; // unused var
-            public string gerakan; // unused var
-        }
-
-        [System.Serializable]
-        public class GestureDictionary
-        {
-            public List<Gesture> listGesture;
-        }
-        #endregion
-
-        #region [Objek Kata Slang]
-        [System.Serializable]
-        public class Slang
-        {
-            public string slang;
-            public string formal;
-        }
-
-        [System.Serializable]
-        public class SlangDictionary
-        {
-            public List<Slang> listSlang;
-        }
-
-        [System.Serializable]
-        public class Frame
-        {
-
-        }
-        #endregion
 
         public override void ChangeModel(bool isAndi)
         {
