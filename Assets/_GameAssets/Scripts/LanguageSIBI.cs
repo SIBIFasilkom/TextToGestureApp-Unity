@@ -103,46 +103,8 @@ namespace FasilkomUI.SIBI
 
             if (m_animancerHeadTongueCoroutine != null) StopCoroutine(m_animancerHeadTongueCoroutine);
             if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
-            m_animancerHeadTongueCoroutine = StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, komponenKata));
-            m_animancerBodyCoroutine = StartCoroutine(_SibiAnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, komponenKata2, true));
-        }
-
-        private IEnumerator _SibiAnimationSequence(NamedAnimancerComponent[] animancers, List<string> komponenKata, bool sendToUI = false)
-        {
-            float fadeDuration = 0.25f;
-            float stateSpeed = 1.0f;
-            int idx = 0;
-
-            AnimancerState state = animancers[0].States.Current;
-
-            foreach (string kata in komponenKata)
-            {
-                if (sendToUI)
-                {
-                    UITextProcessing.Instance.SendTextResultToUI(idx, komponenKata);
-                    idx += 1;
-                }
-
-                foreach (NamedAnimancerComponent animancer in animancers)
-                {
-                    state = animancer.TryPlay(kata, fadeDuration);
-                    if (state != null) state.Speed = stateSpeed;
-                }
-
-                if (state != null)
-                {
-                    while (state.Time < state.Length)
-                    {
-                        yield return null;
-                    }
-                }
-            }
-
-            foreach (NamedAnimancerComponent animancer in animancers)
-            {
-                state = animancer.TryPlay("idle", fadeDuration);
-                state.Speed = stateSpeed;
-            }
+            m_animancerHeadTongueCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, komponenKata));
+            m_animancerBodyCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, komponenKata2, true));
         }
 
         #region [JSON Load Handler]
@@ -440,9 +402,9 @@ namespace FasilkomUI.SIBI
         }
 
         /* 
-            Persiapan lookup gerakan, jika tidak ditemukan pecah jadi alfabet
+            Persiapan lookup gerakan, 
+            jika tidak ditemukan pecah jadi alfabet
             jika merupakan angka, pecah sesuai digit nya
-            todo --> cek langsung ke animancernya aja daripada lewat table
         */
         private List<string> _WordToGesture(List<string> komponenKata)
         {
