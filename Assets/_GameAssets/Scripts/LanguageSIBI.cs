@@ -8,24 +8,6 @@ using UnityEngine;
 
 namespace FasilkomUI.SIBI
 {
-    #region [Objek Kata Berimbuhan]
-    [System.Serializable]
-    public class Kata
-    {
-        public string id;
-        public string[] awalan;
-        public string[] akhiran;
-        public string[] suku;
-        public string pokok;
-    }
-
-    [System.Serializable]
-    public class KataBerimbuhan
-    {
-        public List<Kata> listKata;
-    }
-    #endregion
-
     #region [Objek Kata Slang]
     [System.Serializable]
     public class Slang
@@ -85,14 +67,11 @@ namespace FasilkomUI.SIBI
         }
 
         #region [JSON Load Handler]
-        private Dictionary<string, Kata> _LoadTableLookup()
+        protected override Dictionary<string, Kata> _LoadTableLookup()
         {
             string jsonData = Data_Location.ToString();
-
-            KataBerimbuhan tempList = JsonUtility.FromJson<KataBerimbuhan>(jsonData);
-
+            KataDictionary tempList = JsonUtility.FromJson<KataDictionary>(jsonData);
             Dictionary<string, Kata> tableLookup = new Dictionary<string, Kata>();
-
             foreach (Kata kata in tempList.listKata)
             {
                 tableLookup.Add(kata.id, kata);
@@ -101,12 +80,10 @@ namespace FasilkomUI.SIBI
             return tableLookup;
         }
 
-        private Dictionary<string, Gesture> _LoadGestureLookup()
+        protected override Dictionary<string, Gesture> _LoadGestureLookup()
         {
             string jsonData = Data_Location_Gestures.ToString();
-
             GestureDictionary tempList = JsonUtility.FromJson<GestureDictionary>(jsonData);
-
             Dictionary<string, Gesture> tableLookup = new Dictionary<string, Gesture>();
 
             foreach (Gesture gesture in tempList.listGesture)
@@ -120,9 +97,7 @@ namespace FasilkomUI.SIBI
         private Dictionary<string, Slang> _LoadSlangLookup()
         {
             string jsonData = Data_Location_Slang.ToString();
-
             SlangDictionary tempList = JsonUtility.FromJson<SlangDictionary>(jsonData);
-
             Dictionary<string, Slang> tableLookup = new Dictionary<string, Slang>();
 
             foreach (Slang slang in tempList.listSlang)
@@ -256,157 +231,6 @@ namespace FasilkomUI.SIBI
             }
 
             List<Gesture> finalKomponen = _WordToGesture(komponenKata);
-            return finalKomponen;
-        }
-
-        /**
-         * <summary>
-         * Untuk melakukan dekonstruksi kata ke tabel lookup kata berimbuhan
-         * Deconstruct word yang ini untuk badan
-         * Ex. Berfungsi --> Ber Fungsi
-         * </summary>
-         */
-        private List<Gesture> _DeconstructWord2(string[] token)
-        {
-            Dictionary<string, Kata> tableLookup = _LoadTableLookup();
-            List<string> komponenKata = new List<string>();
-
-            foreach (string t in token)
-            {
-                if (tableLookup.ContainsKey(t))
-                {
-                    // Cek apakah kata merupakan kata majemuk
-                    if (_IsMajemuk(t))
-                    {
-                        // 1. Tambah kata dasar 
-                        komponenKata.Add(tableLookup[t].pokok);
-                        // 2. Tambah awalan
-                        // int indexDasar = komponenKata.IndexOf(tableLookup[t].pokok);
-                        // Debug.Log(indexDasar);
-                        foreach (string awalan in tableLookup[t].awalan)
-                        {
-                            if (awalan != "")
-                            {
-                                Match match = Regex.Match(awalan, @"[0-9]");
-                                string matchVal = "0";
-                                if (match.Success)
-                                {
-                                    matchVal = match.Value;
-                                }
-                                int pos = int.Parse(matchVal);
-
-                                string cAwalan = Regex.Replace(awalan, @"[^a-zA-Z]", "");
-
-                                if (pos == 1)
-                                {
-                                    komponenKata.Insert(komponenKata.IndexOf(tableLookup[t].pokok), cAwalan);
-                                }
-                                else
-                                {
-                                    komponenKata.Insert(komponenKata.IndexOf(tableLookup[t].pokok) + 1, cAwalan);
-                                }
-                            }
-                        }
-
-                        foreach (string akhiran in tableLookup[t].akhiran)
-                        {
-                            if (akhiran != "")
-                            {
-                                Match match = Regex.Match(akhiran, @"[0-9]");
-                                string matchVal = "0";
-                                if (match.Success)
-                                {
-                                    matchVal = match.Value;
-                                }
-                                int pos = int.Parse(matchVal);
-
-                                string cAkhiran = Regex.Replace(akhiran, @"[^a-zA-Z]", "");
-
-                                if (akhiran == "i")
-                                {
-                                    cAkhiran = "-" + cAkhiran;
-                                }
-
-                                if (pos == 1)
-                                {
-                                    komponenKata.Insert(komponenKata.LastIndexOf(tableLookup[t].pokok), cAkhiran);
-                                }
-                                else
-                                {
-                                    komponenKata.Insert(komponenKata.LastIndexOf(tableLookup[t].pokok) + 1, cAkhiran);
-                                }
-                            }
-                        }
-
-                    }
-                    else
-                    {
-                        foreach (string awalan in tableLookup[t].awalan)
-                        {
-                            if (awalan != "")
-                            {
-                                komponenKata.Add(awalan + "-");
-                            }
-                        }
-
-
-                        komponenKata.Add(tableLookup[t].pokok);
-
-                        foreach (string akhiran in tableLookup[t].akhiran)
-                        {
-                            if (akhiran != "")
-                            {
-                                if (akhiran == "i")
-                                {
-                                    komponenKata.Add("-" + akhiran);
-                                }
-                                else
-                                {
-                                    komponenKata.Add("-" + akhiran);
-                                }
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    komponenKata.Add(t);
-                }
-            }
-
-            List<Gesture> finalKomponen = _WordToGesture(komponenKata);
-            return finalKomponen;
-        }
-
-        /* 
-            Persiapan lookup gerakan, 
-            jika tidak ditemukan pecah jadi alfabet
-            jika merupakan angka, pecah sesuai digit nya
-        */
-        private List<Gesture> _WordToGesture(List<string> komponenKata)
-        {
-            Dictionary<string, Gesture> gestureLookup = _LoadGestureLookup();
-            List<Gesture> finalKomponen = new List<Gesture>();
-
-            foreach (string kata in komponenKata)
-            {
-                if (gestureLookup.ContainsKey(kata))
-                {
-                    finalKomponen.Add(gestureLookup[kata]);
-                }
-                else
-                {
-                    string[] split = _AbjadChecker(kata);
-                    foreach (string s in split)
-                    {
-                        if (gestureLookup.ContainsKey(s))
-                            finalKomponen.Add(gestureLookup[s]);
-                        else
-                            finalKomponen.Add(new Gesture(s));
-                    }
-                }
-            }
-
             return finalKomponen;
         }
     }
