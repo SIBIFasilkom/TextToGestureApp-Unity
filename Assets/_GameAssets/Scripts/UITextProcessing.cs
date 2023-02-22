@@ -71,50 +71,29 @@ namespace FasilkomUI
             TextProcessing.Instance.triggerModel(m_currentChar.ToString());
         }
 
-        public void DebugTextOutput(List<string> words)
+        public void DebugTextOutput(List<Gesture> words)
         {
             if (m_editorDebugMode)
             {
                 string output = "";
 
-                foreach (string word in words)
+                foreach (Gesture word in words)
                 {
-                    output += word + ";";
+                    output += word.id + ";";
                 }
 
                 m_textDebug.text = output;
             }
         }
 
-        public void SendTextResultToUI(int idx, List<string> komponenKata2)
+        public void SendTextResultToUI(int idx, List<Gesture> komponenKata2)
         {
             string text = "";
             for (int i = 0; i < komponenKata2.Count; i++)
             {
                 string str = "";
 
-                if (komponenKata2.Count > 1)
-                {
-                    if (komponenKata2[i].Length > 1)
-                    {
-                        if (i == 0)
-                        {
-                            str = char.ToUpper(komponenKata2[i][0]) + komponenKata2[i].Substring(1);
-                        }
-                        else
-                        {
-                            str = komponenKata2[i];
-                        }
-                    }
-                    else
-                    {
-                        str = komponenKata2[i];
-                    }
-                }
-                else
-                {
-                    str = komponenKata2[i];
-                }
+                str = komponenKata2[i].id;
 
                 if (idx == i)
                 {

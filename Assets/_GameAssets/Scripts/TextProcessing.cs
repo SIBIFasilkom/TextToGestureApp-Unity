@@ -48,7 +48,7 @@ namespace FasilkomUI
 
         public void getInputFromAndroid(string text)
         {
-            string rawText = text;
+            string rawText = text.ToLower();
 
             string[] rawToken = m_language.TokenizeText(rawText);
             m_language.ConvertToAnimationFromToken(rawToken);
