@@ -50,7 +50,7 @@ namespace FasilkomUI
         {
             string rawText = text.ToLower();
 
-            string[] rawToken = m_language.TokenizeText(rawText);
+            string[] rawToken = AbstractLanguageUtility.TokenizeText(rawText);
             m_language.ConvertToAnimationFromToken(rawToken);
         }
         #endregion

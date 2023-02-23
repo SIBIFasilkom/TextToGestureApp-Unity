@@ -39,5 +39,16 @@ namespace FasilkomUI
             File.WriteAllText(outputPath, content);
             AssetDatabase.Refresh();
         }
+
+        [MenuItem("Fasilkom-UI/SplitStringTest")]
+        static void SplitStringTest()
+        {
+            string word = "ini test split string";
+            string[] ayy = AbstractLanguageUtility.SplitString(word);
+            foreach(string ay in ayy)
+            {
+                Debug.Log(ay);
+            }
+        }
     }
 }

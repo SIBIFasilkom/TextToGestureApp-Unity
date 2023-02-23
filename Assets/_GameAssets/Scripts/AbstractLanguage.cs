@@ -8,10 +8,31 @@ using UnityEngine;
 
 namespace FasilkomUI
 {
+    #region Slang, Kata, Gesture classes
     [Serializable]
-    public class Gesture
+    public abstract class AbstractSKG
     {
-        public string id;
+        public abstract string id { get; set; }
+    }
+
+    public class Slang : AbstractSKG
+    {
+        public override string id { get; set; }
+        public string formal;
+    }
+
+    public class Kata : AbstractSKG
+    {
+        public override string id { get; set; }
+        public string[] awalan;
+        public string[] akhiran;
+        public string[] suku;
+        public string pokok;
+    }
+
+    public class Gesture : AbstractSKG
+    {
+        public override string id { get; set; }
         public string anim;
 
         public Gesture(string id, string anim = null)
@@ -21,53 +42,25 @@ namespace FasilkomUI
         }
     }
 
-    [Serializable]
-    public class GestureDictionary
+    public class SlangDictionary : AbstractSKGDictionary<Slang> { }
+    public class GestureDictionary : AbstractSKGDictionary<Gesture> { }
+    public class KataDictionary : AbstractSKGDictionary<Kata> { }
+    public abstract class AbstractSKGDictionary<T> where T : AbstractSKG
     {
-        public List<Gesture> listGesture;
+        public List<T> listLanguage;
     }
-
-    [Serializable]
-    public class Kata
-    {
-        public string id;
-        public string[] awalan;
-        public string[] akhiran;
-        public string[] suku;
-        public string pokok;
-    }
-
-    [Serializable]
-    public class KataDictionary
-    {
-        public List<Kata> listKata;
-    }
+    #endregion
 
     public abstract class AbstractLanguage : MonoBehaviour
     {
+        [Header("Database")]
+        [SerializeField] protected TextAsset Data_TableLookup;
+        [SerializeField] protected TextAsset Data_GestureLookup;
+        [SerializeField] protected TextAsset Data_SlangLookup;
+
         public abstract void ConvertToAnimationFromToken(string[] rawToken);
 
         public abstract void ChangeModel(bool isAndi);
-
-        protected abstract Dictionary<string, Kata> _LoadTableLookup();
-
-        protected abstract Dictionary<string, Gesture> _LoadGestureLookup();
-
-        /**
-         * <summary>
-         * Tokenization is essentially splitting a phrase, sentence, paragraph, or an entire text document into smaller units
-         * , such as individual words or terms. Each of these smaller units are called tokens.
-         * </summary>
-         */
-        public string[] TokenizeText(string input)
-        {
-            string[] rawToken = Regex.Split(input, @"[\s\\?]");
-            rawToken = rawToken
-                        .Select(x => x.ToLowerInvariant())
-                        .Where(x => !string.IsNullOrEmpty(x))
-                        .ToArray();
-            return rawToken;
-        }
 
         protected IEnumerator _AnimationSequence(NamedAnimancerComponent[] animancers, List<Gesture> gestures, bool sendToUI = false)
         {
@@ -122,9 +115,9 @@ namespace FasilkomUI
          * Ex. Berfungsi --> Ber Fungsi
          * </summary>
          */
-        protected List<Gesture> _DeconstructWord2(string[] token)
+        protected List<Gesture> _DeconstructWordForBody(string[] token)
         {
-            Dictionary<string, Kata> tableLookup = _LoadTableLookup();
+            Dictionary<string, Kata> tableLookup = AbstractLanguageUtility.LoadSKGLookup<KataDictionary, Kata>(Data_TableLookup.ToString());
             List<string> komponenKata = new List<string>();
 
             foreach (string t in token)
@@ -132,7 +125,7 @@ namespace FasilkomUI
                 if (tableLookup.ContainsKey(t))
                 {
                     // Cek apakah kata merupakan kata majemuk
-                    if (_IsMajemuk(t))
+                    if (AbstractLanguageUtility.IsMajemuk(t))
                     {
                         // 1. Tambah kata dasar 
                         komponenKata.Add(tableLookup[t].pokok);
@@ -141,6 +134,7 @@ namespace FasilkomUI
                         {
                             if (awalan != "")
                             {
+                                #region Sumpah gua ga ngerti ini fungsinya ngepain lollololol
                                 Match match = Regex.Match(awalan, @"[0-9]");
                                 string matchVal = "0";
                                 if (match.Success)
@@ -148,6 +142,7 @@ namespace FasilkomUI
                                     matchVal = match.Value;
                                 }
                                 int pos = int.Parse(matchVal);
+                                #endregion
 
                                 string cAwalan = Regex.Replace(awalan, @"[^a-zA-Z]", "");
 
@@ -233,13 +228,13 @@ namespace FasilkomUI
         }
 
         /* 
-            Persiapan lookup gerakan, 
-            jika tidak ditemukan pecah jadi alfabet
+            Persiapan lookup gerakan, mencari nama file animasi untuk kata formal yang diinput
+            jika tidak ditemukan di database gesture lookup, pecah jadi alfabet
             jika merupakan angka, pecah sesuai digit nya
         */
         protected List<Gesture> _WordToGesture(List<string> komponenKata)
         {
-            Dictionary<string, Gesture> gestureLookup = _LoadGestureLookup();
+            Dictionary<string, Gesture> gestureLookup = AbstractLanguageUtility.LoadSKGLookup<GestureDictionary, Gesture>(Data_GestureLookup.ToString());
             List<Gesture> finalKomponen = new List<Gesture>();
 
             foreach (string kata in komponenKata)
@@ -250,218 +245,18 @@ namespace FasilkomUI
                 }
                 else
                 {
-                    string[] split = _AbjadChecker(kata);
+                    string[] split = AbstractLanguageUtility.AbjadChecker(kata);
                     foreach (string s in split)
                     {
                         if (gestureLookup.ContainsKey(s))
                             finalKomponen.Add(gestureLookup[s]);
                         else
-                            finalKomponen.Add(new Gesture(s));
+                            finalKomponen.Add(new Gesture(s, "(GESTURE NOT FOUND, FIX GESTURELOOKUP DATABASE)"));
                     }
                 }
             }
 
             return finalKomponen;
-        }
-
-        protected bool _IsMajemuk(string word)
-        {
-            return Regex.IsMatch(word, @"[-]");
-        }
-
-        protected string[] _AbjadChecker(string word)
-        {
-            bool isNumeric = Regex.IsMatch(word, @"^[0-9]+$");
-            bool isTimeFormat = Regex.IsMatch(word, @"(?:[01][0-9]|2[0-3]|[1-9])[.][0-5][0-9]");
-            bool isOtherNum = Regex.IsMatch(word, @"(?:[0-9][0-9]|2[0-3]|[1-9])[.][0-5][0-9]");
-
-            if (isNumeric)
-            {
-                int num;
-                bool parsed = Int32.TryParse(word, out num);
-                if (parsed)
-                {
-                    if (num >= 1000)
-                    {
-                        return _SplitString(word);
-                    }
-                    else
-                    {
-                        return _NumberToDigit(word);
-                    }
-                }
-                else
-                {
-                    return _SplitString(word);
-                }
-            }
-            else if (isTimeFormat)
-            {
-                // Additional checker
-                Match match = Regex.Match(word, @"(?:[01][0-9]|2[0-3]|[1-9])[.][0-5][0-9]");
-                if (match.Success)
-                {
-                    if (match.Value == word)
-                    {
-                        return _NumberToTime(word);
-                    }
-                    else
-                    {
-                        string newNumber = word.Replace(".", "");
-                        return _NumberToDigit(newNumber);
-                    }
-                }
-                else
-                {
-                    return _NumberToTime(word);
-                }
-            }
-            else if (isOtherNum)
-            {
-                string newNumber = word.Replace(".", "");
-                return _NumberToDigit(newNumber);
-            }
-            else
-            {
-                return _SplitString(word);
-            }
-        }
-
-        protected string[] _NumberToDigit(string number)
-        {
-            // Kondisi jika dia adalah angka biasa
-            string str = "";
-            List<string> digits = new List<string>();
-            if (Int32.Parse(number) == 0)
-            {
-                str = "0";
-            }
-            else
-            {
-                str = _Terbilang(Int32.Parse(number));
-            }
-
-            string[] finalDigit = Regex.Split(str, @"[\s\\?]");
-
-            for (int i = 0; i < finalDigit.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(finalDigit[i]))
-                {
-                    digits.Add(finalDigit[i]);
-                }
-            }
-
-            // //TODO: Perbaiki
-            // for(int i=0; i<len; i++) {
-            //     string num = "";
-            //     num += number[i];
-            //     digits.Add(num);
-            // }
-            /*  
-            for(int i=0; i<len; i++) {
-                string num = "";
-                if (number[i] != '0') {
-                    num += number[i];
-                    for (int j=0; j<(len-i-1); j++) {
-                        num += "0";
-                    }
-                    digits.Add(num);
-                }
-            }
-            */
-            return digits.ToArray();
-        }
-
-        protected string[] _NumberToTime(string number)
-        {
-            string tnumber = number.Replace(".", " lebih ");
-            //split : 19 lebih 30
-            string[] tnToken = Regex.Split(tnumber, @"[\s\\?]");
-
-            string str = "";
-            string str1 = "";
-            string str2 = "";
-            List<string> digits = new List<string>();
-
-            if (Int32.Parse(tnToken[0]) == 0)
-            {
-                str1 = "0";
-            }
-            else
-            {
-                str1 = _Terbilang(Int32.Parse(tnToken[0]));
-            }
-
-            if (Int32.Parse(tnToken[2]) == 0)
-            {
-                str2 = "0";
-            }
-            else
-            {
-                str2 = _Terbilang(Int32.Parse(tnToken[2]));
-            }
-
-            str = str1 + " " + tnToken[1] + " " + str2;
-            Debug.LogWarning(str);
-
-            string[] finalDigit = Regex.Split(str, @"[\s\\?]");
-
-            for (int i = 0; i < finalDigit.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(finalDigit[i]))
-                {
-                    digits.Add(finalDigit[i]);
-                }
-            }
-
-            return digits.ToArray();
-        }
-
-        protected string[] _SplitString(string word)
-        {
-            string[] words = Regex.Split(word, string.Empty);
-            words = words.Where(x => !string.IsNullOrEmpty(x)).ToArray();
-            return words;
-        }
-
-        protected string _Terbilang(int num)
-        {
-            string strDigit = "";
-            string[] baseNumber = {"","1","2","3","4","5","6","7","8","9","10",
-                                "11","12","13","14","15","16","17","18","19"};
-
-            if (num < 20)
-            {
-                strDigit = baseNumber[num];
-            }
-            else if (num < 100)
-            {
-                strDigit = this._Terbilang(num / 10) + " puluh " + this._Terbilang(num % 10);
-            }
-            else if (num < 200)
-            {
-                strDigit = " ratus " + this._Terbilang(num - 100);
-            }
-            else if (num < 1000)
-            {
-                strDigit = this._Terbilang(num / 100) + " ratus " + this._Terbilang(num % 100);
-            }
-            else if (num < 2000) // kalo diatas seribu pakenya fungsi splitstring???
-            {
-                strDigit = " ribu   " + this._Terbilang(num - 1000);
-            }
-            else if (num < 1000000)
-            {
-                strDigit = this._Terbilang(num / 1000) + " ribu " + this._Terbilang(num % 1000);
-            }
-            else if (num < 1000000000)
-            {
-                strDigit = this._Terbilang(num / 1000000) + " juta " + this._Terbilang(num % 1000000);
-            }
-
-            strDigit = Regex.Replace(strDigit, @"^\s+|\s+$", " ");
-
-            return strDigit;
         }
     }
 }

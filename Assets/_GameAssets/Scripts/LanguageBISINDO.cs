@@ -36,38 +36,11 @@ namespace FasilkomUI.BISINDO
 
         public override void ConvertToAnimationFromToken(string[] rawToken)
         {
-            List<Gesture> komponenKata2 = _DeconstructWord2(rawToken);
+            List<Gesture> komponenKata2 = _DeconstructWordForBody(rawToken);
 
             if (m_animancerHeadTongueCoroutine != null) StopCoroutine(m_animancerHeadTongueCoroutine);
             if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
             m_animancerBodyCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, komponenKata2, true));
-        }
-
-        protected override Dictionary<string, Kata> _LoadTableLookup()
-        {
-            string jsonData = Data_Location.ToString();
-            KataDictionary tempList = JsonUtility.FromJson<KataDictionary>(jsonData);
-            Dictionary<string, Kata> tableLookup = new Dictionary<string, Kata>();
-            foreach (Kata kata in tempList.listKata)
-            {
-                tableLookup.Add(kata.id, kata);
-            }
-
-            return tableLookup;
-        }
-
-        protected override Dictionary<string, Gesture> _LoadGestureLookup()
-        {
-            string jsonData = m_gestureLookup.ToString();
-            GestureDictionary tempList = JsonUtility.FromJson<GestureDictionary>(jsonData);
-            Dictionary<string, Gesture> tableLookup = new Dictionary<string, Gesture>();
-
-            foreach (Gesture gesture in tempList.listGesture)
-            {
-                tableLookup.Add(gesture.id, gesture);
-            }
-
-            return tableLookup;
         }
     }
 }
