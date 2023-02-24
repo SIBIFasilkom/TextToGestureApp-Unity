@@ -12,51 +12,51 @@ namespace FasilkomUI
     [Serializable]
     public abstract class AbstractSKG
     {
-        public abstract string id { get; set; }
+        public string id;
     }
 
+    [Serializable]
     public class Slang : AbstractSKG
     {
-        public override string id { get; set; }
         public string formal;
     }
 
+    [Serializable]
     public class Kata : AbstractSKG
     {
-        public override string id { get; set; }
-        public string[] awalan;
-        public string[] akhiran;
-        public string[] suku;
         public string pokok;
+        public string awalan;
+        public string akhiran;
+        public string suku;
+
+        public string[] awalans;
+        public string[] akhirans;
+        public string[] sukus;
     }
 
+    [Serializable]
     public class Gesture : AbstractSKG
     {
-        public override string id { get; set; }
         public string anim;
-
-        public Gesture(string id, string anim = null)
-        {
-            this.id = id;
-            this.anim = anim;
-        }
     }
 
-    public class SlangDictionary : AbstractSKGDictionary<Slang> { }
-    public class GestureDictionary : AbstractSKGDictionary<Gesture> { }
-    public class KataDictionary : AbstractSKGDictionary<Kata> { }
+    [Serializable]
     public abstract class AbstractSKGDictionary<T> where T : AbstractSKG
     {
-        public List<T> listLanguage;
+        public List<T> listSKG;
     }
+
+    [Serializable] public class SlangDictionary : AbstractSKGDictionary<Slang> { }
+    [Serializable] public class GestureDictionary : AbstractSKGDictionary<Gesture> { }
+    [Serializable] public class KataDictionary : AbstractSKGDictionary<Kata> { }
     #endregion
 
     public abstract class AbstractLanguage : MonoBehaviour
     {
         [Header("Database")]
+        [SerializeField] protected TextAsset Data_SlangLookup;
         [SerializeField] protected TextAsset Data_TableLookup;
         [SerializeField] protected TextAsset Data_GestureLookup;
-        [SerializeField] protected TextAsset Data_SlangLookup;
 
         public abstract void ConvertToAnimationFromToken(string[] rawToken);
 
@@ -130,7 +130,7 @@ namespace FasilkomUI
                         // 1. Tambah kata dasar 
                         komponenKata.Add(tableLookup[t].pokok);
                         // 2. Tambah awalan
-                        foreach (string awalan in tableLookup[t].awalan)
+                        foreach (string awalan in tableLookup[t].awalans)
                         {
                             if (awalan != "")
                             {
@@ -157,7 +157,7 @@ namespace FasilkomUI
                             }
                         }
 
-                        foreach (string akhiran in tableLookup[t].akhiran)
+                        foreach (string akhiran in tableLookup[t].akhirans)
                         {
                             if (akhiran != "")
                             {
@@ -190,7 +190,7 @@ namespace FasilkomUI
                     }
                     else
                     {
-                        foreach (string awalan in tableLookup[t].awalan)
+                        foreach (string awalan in tableLookup[t].awalans)
                         {
                             if (awalan != "")
                             {
@@ -201,7 +201,7 @@ namespace FasilkomUI
 
                         komponenKata.Add(tableLookup[t].pokok);
 
-                        foreach (string akhiran in tableLookup[t].akhiran)
+                        foreach (string akhiran in tableLookup[t].akhirans)
                         {
                             if (akhiran != "")
                             {
@@ -227,11 +227,13 @@ namespace FasilkomUI
             return finalKomponen;
         }
 
-        /* 
-            Persiapan lookup gerakan, mencari nama file animasi untuk kata formal yang diinput
-            jika tidak ditemukan di database gesture lookup, pecah jadi alfabet
-            jika merupakan angka, pecah sesuai digit nya
-        */
+        /**
+         *  <summary>
+         *  Persiapan lookup gerakan, mencari nama file animasi untuk kata formal yang diinput
+         *  jika tidak ditemukan di database gesture lookup, pecah jadi alfabet
+         *  jika merupakan angka, pecah sesuai digit nya
+         *  </summary>
+         */
         protected List<Gesture> _WordToGesture(List<string> komponenKata)
         {
             Dictionary<string, Gesture> gestureLookup = AbstractLanguageUtility.LoadSKGLookup<GestureDictionary, Gesture>(Data_GestureLookup.ToString());
@@ -251,12 +253,25 @@ namespace FasilkomUI
                         if (gestureLookup.ContainsKey(s))
                             finalKomponen.Add(gestureLookup[s]);
                         else
-                            finalKomponen.Add(new Gesture(s, "(GESTURE NOT FOUND, FIX GESTURELOOKUP DATABASE)"));
+                            finalKomponen.Add(_GestureNotFound(s));
                     }
                 }
             }
 
             return finalKomponen;
+        }
+
+        /**
+         * <summary>
+         * Kalau gesture ga ada, bikin gesture kosong & throw warning
+         * </summary>
+         */
+        protected Gesture _GestureNotFound(string splitKata)
+        {
+            Gesture gesture = new Gesture();
+            gesture.id = splitKata;
+            gesture.anim = "(GESTURE NOT FOUND, FIX GESTURELOOKUP DATABASE)";
+            return gesture;
         }
     }
 }

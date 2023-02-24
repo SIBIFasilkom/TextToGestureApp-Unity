@@ -8,10 +8,6 @@ namespace FasilkomUI.BISINDO
 {
     public class LanguageBISINDO : AbstractLanguage
     {
-        [Header("Database")]
-        [SerializeField] TextAsset Data_Location;
-        [SerializeField] TextAsset m_gestureLookup;
-
         [Header("Animancer")]
         [SerializeField] NamedAnimancerComponent _Andi;
         [SerializeField] NamedAnimancerComponent _AndiTongue;

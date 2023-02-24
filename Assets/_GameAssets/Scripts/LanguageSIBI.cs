@@ -99,7 +99,7 @@ namespace FasilkomUI.SIBI
 
 
 
-                        foreach (string suku in tableLookup[t].suku)
+                        foreach (string suku in tableLookup[t].sukus)
                         {
                             if (suku != "")
                             {
@@ -127,7 +127,7 @@ namespace FasilkomUI.SIBI
                     else
                     {
 
-                        foreach (string awalan in tableLookup[t].awalan)
+                        foreach (string awalan in tableLookup[t].awalans)
                         {
                             if (awalan != "")
                             {
@@ -135,7 +135,7 @@ namespace FasilkomUI.SIBI
                             }
                         }
 
-                        foreach (string suku in tableLookup[t].suku)
+                        foreach (string suku in tableLookup[t].sukus)
                         {
                             if (suku != "")
                             {
@@ -143,7 +143,7 @@ namespace FasilkomUI.SIBI
                             }
                         }
 
-                        foreach (string akhiran in tableLookup[t].akhiran)
+                        foreach (string akhiran in tableLookup[t].akhirans)
                         {
                             if (akhiran != "")
                             {

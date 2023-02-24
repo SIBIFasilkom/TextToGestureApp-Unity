@@ -18,14 +18,20 @@ namespace FasilkomUI
          * U : GKS contohnya Gesture
          * </summary>
          */
-        public static Dictionary<string, U> LoadSKGLookup<T, U>(string path) where T : AbstractSKGDictionary<U> where U : AbstractSKG
+        public static Dictionary<string, U> LoadSKGLookup<T, U>(string jsonData) where T : AbstractSKGDictionary<U> where U : AbstractSKG
         {
-            string jsonData = path;
             T tempList = JsonUtility.FromJson<T>(jsonData);
             Dictionary<string, U> tableLookup = new Dictionary<string, U>();
-            foreach (U languageObject in tempList.listLanguage)
+            foreach (U skg in tempList.listSKG)
             {
-                tableLookup.Add(languageObject.id, languageObject);
+                if(skg.GetType() == typeof(Kata))
+                {
+                    (skg as Kata).awalans = (skg as Kata).awalan.Split(';');
+                    (skg as Kata).akhirans = (skg as Kata).akhiran.Split(';');
+                    (skg as Kata).sukus = (skg as Kata).suku.Split(';');
+                }
+
+                tableLookup.Add(skg.id, skg);
             }
 
             return tableLookup;

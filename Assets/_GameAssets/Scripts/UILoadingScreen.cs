@@ -9,7 +9,7 @@ namespace FasilkomUI
     {
         [SerializeField] Text m_loadingText;
 
-        #region Adroid Callbacks
+        #region Android Callbacks
         public void LoadScene(string sceneName)
         {
             StartCoroutine(_LoadSceneHandler(sceneName));
@@ -18,8 +18,9 @@ namespace FasilkomUI
 
         private void Start()
         {
-            // kedepannya ga pake start, dipanggil dari android studio.
+#if UNITY_EDITOR
             LoadScene("MainSIBI");
+#endif
         }
 
         private IEnumerator _LoadSceneHandler(string sceneName)
