@@ -203,6 +203,7 @@ namespace FasilkomUI
          * <summary>
          * Ubah jadi per karakter
          * Ex: sudirman --> s u d i r m a n
+         * --> kalo angka & huruf jadinya ngaco (ex 5cl jadinya 5 c l, seharusnya lima c l)
          * </summary>
          */
         public static string[] SplitString(string word)
