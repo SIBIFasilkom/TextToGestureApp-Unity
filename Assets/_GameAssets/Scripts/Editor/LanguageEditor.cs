@@ -30,7 +30,7 @@ namespace FasilkomUI
             string content = "";
             foreach (string entry in entries)
             {
-                content += Path.GetFileName(entry).Replace("."+fileType, "") + Environment.NewLine;
+                content += Path.GetFileName(entry).Replace("." + fileType, "") + Environment.NewLine;
             }
 
             if (File.Exists(outputPath))
@@ -45,7 +45,7 @@ namespace FasilkomUI
         {
             string word = "ini test split string";
             string[] ayy = AbstractLanguageUtility.SplitString(word);
-            foreach(string ay in ayy)
+            foreach (string ay in ayy)
             {
                 Debug.Log(ay);
             }

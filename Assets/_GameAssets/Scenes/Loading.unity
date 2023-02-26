@@ -270,9 +270,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 0.5
-  m_Text: 'Tunggu Sebentar
-
-    <size=12>(100 %)</size>'
+  m_Text: Tunggu Sebentar
 --- !u!222 &1605340179
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -310,7 +308,7 @@ GameObject:
   - component: {fileID: 1948872555}
   - component: {fileID: 1948872559}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UILoadingScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

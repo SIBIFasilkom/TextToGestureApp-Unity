@@ -3,46 +3,43 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace FasilkomUI
+public class UILoadingScreen : MonoBehaviour
 {
-    public class UILoadingScreen : MonoBehaviour
+    [SerializeField] Text m_loadingText;
+
+    #region Android Callbacks
+    public void loadScene(string sceneName)
     {
-        [SerializeField] Text m_loadingText;
+        StartCoroutine(_LoadSceneHandler(sceneName));
+    }
+    #endregion
 
-        #region Android Callbacks
-        public void LoadScene(string sceneName)
-        {
-            StartCoroutine(_LoadSceneHandler(sceneName));
-        }
-        #endregion
-
-        private void Start()
-        {
+    private void Start()
+    {
 #if UNITY_EDITOR
-            LoadScene("MainSIBI");
+        loadScene("MainSIBI");
 #endif
-        }
+    }
 
-        private IEnumerator _LoadSceneHandler(string sceneName)
+    private IEnumerator _LoadSceneHandler(string sceneName)
+    {
+        m_loadingText.text = "Tunggu Sebentar";
+        yield return new WaitForSeconds(0.25f);
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        operation.allowSceneActivation = false;
+
+        while (!operation.isDone)
         {
-            m_loadingText.text = "Tunggu Sebentar";
-            yield return new WaitForSeconds(0.25f);
+            int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
+            m_loadingText.text = "Tunggu Sebentar\n<size=12>(" + progress + " %)</size>";
 
-            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
-            operation.allowSceneActivation = false;
-
-            while (!operation.isDone)
+            if (operation.progress >= 0.9f)
             {
-                int progress = Mathf.RoundToInt(Mathf.Clamp01(operation.progress / 0.9f) * 100);
-                m_loadingText.text = "Tunggu Sebentar\n<size=12>(" + progress + " %)</size>";
-
-                if (operation.progress >= 0.9f)
-                {
-                    operation.allowSceneActivation = true;
-                }
-
-                yield return null;
+                operation.allowSceneActivation = true;
             }
+
+            yield return null;
         }
     }
 }
