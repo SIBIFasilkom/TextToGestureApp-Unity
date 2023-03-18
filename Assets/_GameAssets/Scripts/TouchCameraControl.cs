@@ -21,6 +21,12 @@ namespace FasilkomUI
         public Clamp yTranslateClamp;
         public Clamp zoomClamp;
 
+        [Header("Editor Only")]
+        public float MouseSensitivity_x = 1.0f;
+        public float MouseSensitivity_y = 0.01f;
+        public float ScrollSensitivity = 5.0f;
+        Vector3 m_lastMousePosition;
+
         public void Update()
         {
             if (Input.touchCount == 1)
@@ -46,6 +52,31 @@ namespace FasilkomUI
                 foreach (Camera camera in m_cameras)
                     camera.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
             }
+
+#if UNITY_EDITOR
+            if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
+            {
+                m_lastMousePosition = Input.mousePosition;
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                float x = (Input.mousePosition.x - m_lastMousePosition.x) * MouseSensitivity_x;
+                float yRotation = Mathf.Clamp(transform.rotation.eulerAngles.y + x, yRotationClamp.min, yRotationClamp.max);
+                transform.rotation = Quaternion.Euler(new Vector3(0.0f, yRotation, 0.0f));
+            }
+            else if (Input.GetMouseButton(1))
+            {
+                float y = (Input.mousePosition.y - m_lastMousePosition.y) * MouseSensitivity_y;
+                float yPos = Mathf.Clamp(transform.position.y + y, yTranslateClamp.min, yTranslateClamp.max);
+                transform.position = new Vector3(0.0f, yPos, 0.0f);
+            } else
+            {
+                float scrollDeltaY = Input.mouseScrollDelta.y;
+                float zoom = Camera.main.fieldOfView + scrollDeltaY;
+                foreach (Camera camera in m_cameras)
+                    camera.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
+            }
+#endif
         }
     }
 
