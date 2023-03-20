@@ -38,8 +38,6 @@ namespace FasilkomUI.SIBI
             List<Gesture> komponenKata = _DeconstructWordForMouth(correctedToken);
             List<Gesture> komponenKata2 = _DeconstructWordForBody(correctedToken);
 
-            UITextProcessing.Instance.DebugTextOutput(komponenKata2);
-
             if (m_animancerHeadTongueCoroutine != null) StopCoroutine(m_animancerHeadTongueCoroutine);
             if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
             m_animancerHeadTongueCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, komponenKata));

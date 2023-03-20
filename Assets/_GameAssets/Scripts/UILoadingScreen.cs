@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class UILoadingScreen : MonoBehaviour
 {
+    public static string loadingSceneName = "MainSIBI";
+
     [SerializeField] Text m_loadingText;
 
     #region Android Callbacks
@@ -16,9 +18,7 @@ public class UILoadingScreen : MonoBehaviour
 
     private void Start()
     {
-#if UNITY_EDITOR
-        loadScene("MainSIBI");
-#endif
+        loadScene(loadingSceneName);
     }
 
     private IEnumerator _LoadSceneHandler(string sceneName)

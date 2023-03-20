@@ -12,51 +12,25 @@ namespace FasilkomUI
 
         [SerializeField] Text m_textResult;
 
-        [Header("Debug Mode")]
-        [SerializeField] bool m_editorDebugMode = false;
-        [SerializeField] GameObject m_debugUI;
+        [Header("Bottom UI")]
         [SerializeField] Slider m_sliderSpeed;
-        [SerializeField] Text m_textDebug;
 
         CharacterNames m_currentChar = CharacterNames.Andi;
-
-        Quaternion m_originalCamRotation;
 
         #region Unity Callbacks
         private void Awake()
         {
-#if UNITY_EDITOR
-            m_editorDebugMode = true;
-#endif
-
             Instance = this;
-        }
-
-        private void Start()
-        {
-            m_originalCamRotation = transform.rotation;
         }
 
         private void Update()
         {
-            if (m_editorDebugMode)
+            TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+
+            if (Input.GetKeyDown(KeyCode.Escape))
             {
-                m_debugUI.gameObject.SetActive(true);
-                TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
-
-                if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    if (SceneManager.GetActiveScene().buildIndex == 0)
-                        Application.Quit();
-                    else
-                        SceneManager.LoadScene(0);
-                }
+                BackButton();
             }
-        }
-
-        private void LateUpdate()
-        {
-            transform.rotation = Camera.main.transform.rotation * m_originalCamRotation;
         }
         #endregion
 
@@ -71,19 +45,10 @@ namespace FasilkomUI
             TextProcessing.Instance.triggerModel(m_currentChar.ToString());
         }
 
-        public void DebugTextOutput(List<Gesture> words)
+        public void BackButton()
         {
-            if (m_editorDebugMode)
-            {
-                string output = "";
-
-                foreach (Gesture word in words)
-                {
-                    output += word.id + ";";
-                }
-
-                m_textDebug.text = output;
-            }
+            // kalo nganu jangan balik ke menuscreen
+            SceneManager.LoadScene("Menuscreen");
         }
 
         public void SendTextResultToUI(int idx, List<Gesture> komponenKata2)
