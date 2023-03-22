@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using FasilkomUI.Tutorial;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -49,6 +50,11 @@ namespace FasilkomUI
         {
             // kalo nganu jangan balik ke menuscreen
             SceneManager.LoadScene("Menuscreen");
+        }
+
+        public void HelpButton()
+        {
+            UITutorial.Instance?.gameObject.SetActive(true);
         }
 
         public void SendTextResultToUI(int idx, List<Gesture> komponenKata2)
