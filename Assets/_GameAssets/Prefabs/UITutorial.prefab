@@ -849,16 +849,22 @@ MonoBehaviour:
     m_Font: {fileID: 12800000, guid: bc8c66a32b3497a419ef5db4887acf13, type: 3}
     m_FontSize: 18
     m_FontStyle: 0
-    m_BestFit: 1
-    m_MinSize: 1
+    m_BestFit: 0
+    m_MinSize: 14
     m_MaxSize: 18
     m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
-    m_LineSpacing: 1
-  m_Text: New Text
+    m_LineSpacing: 0.5
+  m_Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam viverra tristique
+    risus sit amet dictum. Proin aliquet, dolor mattis euismod interdum, dolor sem
+    fringilla risus, sit amet fringilla nunc dolor in elit. Nullam efficitur bibendum
+    purus id venenatis. Pellentesque rhoncus rutrum dolor, eget sollicitudin mauris
+    suscipit vel. Aenean feugiat erat eros, id scelerisque lacus porttitor sit amet.
+    Aenean vel dictum mauris. Vestibulum dapibus tempus sapien sit amet porta. Suspendisse
+    non neque luctus, ullamcorper neque in, facilisis leo. Sed mollis blandit tempus.
 --- !u!1 &5237328724449490019
 GameObject:
   m_ObjectHideFlags: 0
