@@ -6,13 +6,10 @@ using System.IO;
 using System;
 using UnityEditor.SceneManagement;
 
-namespace FasilkomUI
+namespace FasilkomUI.Editor
 {
-    [CreateAssetMenu(fileName = "Language Scriptable", menuName = "Fasilkom-UI/Language Scriptable", order = 1)]
-    public class LanguageScriptable : ScriptableObject
+    public class FasilkomUIEditor
     {
-        public Dictionary<string, Animation> m_animationKeys;
-
         [MenuItem("Fasilkom-UI/WriteFilenamesList")]
         static void WriteFilenamesAsJSON()
         {
@@ -64,6 +61,13 @@ namespace FasilkomUI
                 EditorSceneManager.playModeStartScene = sceneAsset;
             else
                 EditorSceneManager.playModeStartScene = null;
+        }
+
+        [MenuItem("Fasilkom-UI/SimulateOpenTouchScreenKeyboard")]
+        public static void SimulateOpenTouchScreenKeyboard()
+        {
+            Debug.Log("Simulating touch screen keyboard... Nah, jk. This function doesn't work lmao");
+            TouchScreenKeyboard.Open("");
         }
     }
 }

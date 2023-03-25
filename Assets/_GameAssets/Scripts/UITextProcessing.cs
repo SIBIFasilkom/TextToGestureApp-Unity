@@ -11,6 +11,8 @@ namespace FasilkomUI
     {
         public static UITextProcessing Instance { get; private set; }
 
+        [SerializeField] RectTransform m_wrapper;
+
         [SerializeField] Text m_textResult;
 
         [Header("Bottom UI")]
@@ -30,6 +32,12 @@ namespace FasilkomUI
         private void Update()
         {
             TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+
+            m_wrapper.anchoredPosition = (TouchScreenKeyboard.visible) ? new Vector2(0.0f, TouchScreenKeyboard.area.height) : Vector2.zero;
+            if(TouchScreenKeyboard.visible)
+            {
+                Debug.Log(m_wrapper.anchoredPosition.ToString() + " - " + TouchScreenKeyboard.area.height);
+            }
 
             if (Input.GetKeyDown(KeyCode.Escape))
             {
@@ -57,7 +65,7 @@ namespace FasilkomUI
                 return;
             }
 
-            // kamus kebuka tutup kamus
+            // kamus kebuka ==> tutup kamus
 
             SceneManager.LoadScene("Menuscreen");
         }
