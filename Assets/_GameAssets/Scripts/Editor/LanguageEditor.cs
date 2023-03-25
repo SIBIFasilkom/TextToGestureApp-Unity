@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System;
+using UnityEditor.SceneManagement;
 
 namespace FasilkomUI
 {
@@ -49,6 +50,20 @@ namespace FasilkomUI
             {
                 Debug.Log(ay);
             }
+        }
+
+        public static bool togglePlayFromMenuscreen = true;
+
+        [MenuItem("Fasilkom-UI/TogglePlayFromMenuscreen")]
+        public static void PlayFromMenuscreen()
+        {
+            togglePlayFromMenuscreen = !togglePlayFromMenuscreen;
+            var sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>("Assets/_GameAssets/Scenes/Menuscreen.unity");
+            Debug.Log("Toggle from menuscreen : " + togglePlayFromMenuscreen + " - " + sceneAsset);
+            if (togglePlayFromMenuscreen)
+                EditorSceneManager.playModeStartScene = sceneAsset;
+            else
+                EditorSceneManager.playModeStartScene = null;
         }
     }
 }

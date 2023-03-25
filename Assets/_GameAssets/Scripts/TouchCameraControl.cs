@@ -1,3 +1,4 @@
+using FasilkomUI.Tutorial;
 using UnityEngine;
 
 namespace FasilkomUI
@@ -29,6 +30,9 @@ namespace FasilkomUI
 
         public void Update()
         {
+            if (UITutorial.Instance && UITutorial.Instance.gameObject.activeSelf)
+                return;
+
             if (Input.touchCount == 1)
             {
                 float x = Input.touches[0].deltaPosition.x * TouchSensitivity_x;

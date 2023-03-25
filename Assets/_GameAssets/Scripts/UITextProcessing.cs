@@ -15,6 +15,9 @@ namespace FasilkomUI
 
         [Header("Bottom UI")]
         [SerializeField] Slider m_sliderSpeed;
+        [SerializeField] Text m_inputCounter;
+        [SerializeField] Color m_inputCounter_defaultColor;
+        [SerializeField] Color m_inputCounter_maxColor;
 
         CharacterNames m_currentChar = CharacterNames.Andi;
 
@@ -48,13 +51,26 @@ namespace FasilkomUI
 
         public void BackButton()
         {
-            // kalo nganu jangan balik ke menuscreen
+            if(UITutorial.Instance && UITutorial.Instance.gameObject.activeSelf)
+            {
+                UITutorial.Instance.CloseButton();
+                return;
+            }
+
+            // kamus kebuka tutup kamus
+
             SceneManager.LoadScene("Menuscreen");
         }
 
         public void HelpButton()
         {
             UITutorial.Instance?.gameObject.SetActive(true);
+        }
+
+        public void UpdateInputCounter(InputField inputField)
+        {
+            m_inputCounter.text = inputField.text.Length + " / " + inputField.characterLimit;
+            m_inputCounter.color = (inputField.text.Length < inputField.characterLimit) ? m_inputCounter_defaultColor : m_inputCounter_maxColor;
         }
 
         public void SendTextResultToUI(int idx, List<Gesture> komponenKata2)
