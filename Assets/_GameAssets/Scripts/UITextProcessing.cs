@@ -17,6 +17,7 @@ namespace FasilkomUI
 
         [Header("Bottom UI")]
         [SerializeField] Slider m_sliderSpeed;
+        [SerializeField] InputField m_inputField;
         [SerializeField] Text m_inputCounter;
         [SerializeField] Color m_inputCounter_defaultColor;
         [SerializeField] Color m_inputCounter_maxColor;
@@ -33,10 +34,13 @@ namespace FasilkomUI
         {
             TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
 
-            m_wrapper.anchoredPosition = (TouchScreenKeyboard.visible) ? new Vector2(0.0f, TouchScreenKeyboard.area.height) : Vector2.zero;
-            if(TouchScreenKeyboard.visible)
+            if(TouchScreenKeyboard.visible || m_inputField.isFocused)
             {
-                Debug.Log(m_wrapper.anchoredPosition.ToString() + " - " + TouchScreenKeyboard.area.height);
+                var keyboardSize = _GetKeyboardHeightRatio() * m_wrapper.rect.height;
+                m_wrapper.anchoredPosition = new Vector2(0.0f, keyboardSize);
+            } else
+            {
+                m_wrapper.anchoredPosition = Vector2.zero;
             }
 
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -102,6 +106,27 @@ namespace FasilkomUI
 
             m_textResult.text = text;
         }
-    }
 
+        private float _GetKeyboardHeightRatio()
+        {
+            if (Application.isEditor)
+            {
+                return 0.4f;       
+            }
+
+#if UNITY_ANDROID
+            using (AndroidJavaClass UnityClass = new AndroidJavaClass("com.unity3d.player.UnityPlayer"))
+            {
+                AndroidJavaObject View = UnityClass.GetStatic<AndroidJavaObject>("currentActivity").Get<AndroidJavaObject>("mUnityPlayer").Call<AndroidJavaObject>("getView");
+                using (AndroidJavaObject rect = new AndroidJavaObject("android.graphics.Rect"))
+                {
+                    View.Call("getWindowVisibleDisplayFrame", rect);
+                    return (float)(Screen.height - rect.Call<int>("height")) / Screen.height;
+                }
+            }
+#else
+        return (float)TouchScreenKeyboard.area.height / Screen.height;
+#endif
+        }
+    }
 }
