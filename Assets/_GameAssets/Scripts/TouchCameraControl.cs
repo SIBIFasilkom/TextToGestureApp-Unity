@@ -12,6 +12,8 @@ namespace FasilkomUI
 
     public class TouchCameraControl : MonoBehaviour
     {
+        public static TouchCameraControl Instance { get; private set; }
+
         [SerializeField] Camera[] m_cameras;
 
         public float TouchSensitivity_x = 0.1f;
@@ -28,7 +30,13 @@ namespace FasilkomUI
         public float ScrollSensitivity = 5.0f;
         Vector3 m_lastMousePosition;
 
-        public void Update()
+        #region Unity's Callback
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        private void Update()
         {
             if (UITutorial.Instance && UITutorial.Instance.gameObject.activeSelf)
                 return;
@@ -53,8 +61,7 @@ namespace FasilkomUI
 
                 float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
                 float zoom = Camera.main.fieldOfView + deltaMagnitudeDiff * PinchSensitivity * Time.unscaledDeltaTime;
-                foreach (Camera camera in m_cameras)
-                    camera.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
+                UpdateAllCamerasZoom(zoom);
             }
 
 #if UNITY_EDITOR
@@ -75,13 +82,24 @@ namespace FasilkomUI
                 transform.position = new Vector3(0.0f, yPos, 0.0f);
             } else
             {
-                float scrollDeltaY = Input.mouseScrollDelta.y;
+                float scrollDeltaY = -Input.mouseScrollDelta.y;
                 float zoom = Camera.main.fieldOfView + scrollDeltaY;
                 foreach (Camera camera in m_cameras)
                     camera.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
             }
 #endif
         }
-    }
+        #endregion
 
+        public float GenerateCameraZoomPercentage()
+        {
+            return (Camera.main.fieldOfView - zoomClamp.min) / (zoomClamp.max - zoomClamp.min);
+        }
+
+        public void UpdateAllCamerasZoom(float zoom)
+        {
+            foreach (Camera camera in m_cameras)
+                camera.fieldOfView = Mathf.Clamp(zoom, zoomClamp.min, zoomClamp.max);
+        }
+    }
 }

@@ -25,7 +25,6 @@ namespace FasilkomUI.Tutorial
         [SerializeField] Image m_tutorialImage;
         [SerializeField] Text m_contentText;
         [SerializeField] Text m_countText;
-        [SerializeField] Button m_closeButton;
         [SerializeField] Button m_prevButton;
         [SerializeField] Button m_nextButton;
 
@@ -72,7 +71,6 @@ namespace FasilkomUI.Tutorial
             m_tutorialImage.sprite = m_tutorials[m_currentCount].Sprite;
             m_contentText.text = m_tutorials[m_currentCount].Content;
             m_countText.text = (m_currentCount + 1) + "/" + m_tutorials.Length;
-            m_closeButton.interactable = m_currentCount + 1 == m_tutorials.Length;
             m_prevButton.interactable = m_currentCount > 0;
             m_nextButton.interactable = m_currentCount + 1 < m_tutorials.Length;
         }

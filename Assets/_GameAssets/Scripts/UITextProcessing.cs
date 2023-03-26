@@ -16,6 +16,7 @@ namespace FasilkomUI
         [SerializeField] Text m_textResult;
 
         [Header("Bottom UI")]
+        [SerializeField] Slider m_sliderZoom;
         [SerializeField] Slider m_sliderSpeed;
         [SerializeField] InputField m_inputField;
         [SerializeField] Text m_inputCounter;
@@ -23,6 +24,10 @@ namespace FasilkomUI
         [SerializeField] Color m_inputCounter_maxColor;
 
         CharacterNames m_currentChar = CharacterNames.Andi;
+
+        [SerializeField] float m_keyboardOpenSpeed = 10.0f;
+        float m_keyboardSize = 0.0f;
+        float m_keyboardOpenPercentage = 0.0f;
 
         #region Unity Callbacks
         private void Awake()
@@ -32,15 +37,18 @@ namespace FasilkomUI
 
         private void Update()
         {
+            m_sliderZoom.value = 1 - TouchCameraControl.Instance.GenerateCameraZoomPercentage();
+
             TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
 
-            if(TouchScreenKeyboard.visible || m_inputField.isFocused)
+            m_wrapper.anchoredPosition = new Vector2(0.0f, m_keyboardSize * m_keyboardOpenPercentage);
+            if (m_inputField.isFocused)
             {
-                var keyboardSize = _GetKeyboardHeightRatio() * m_wrapper.rect.height;
-                m_wrapper.anchoredPosition = new Vector2(0.0f, keyboardSize);
+                m_keyboardSize = _GetKeyboardHeightRatio() * m_wrapper.rect.height;
+                m_keyboardOpenPercentage = Mathf.Min(m_keyboardOpenPercentage + Time.deltaTime * m_keyboardOpenSpeed, 1.0f);
             } else
             {
-                m_wrapper.anchoredPosition = Vector2.zero;
+                m_keyboardOpenPercentage = Mathf.Max(m_keyboardOpenPercentage - Time.deltaTime * m_keyboardOpenSpeed, 0.0f);
             }
 
             if (Input.GetKeyDown(KeyCode.Escape))
@@ -59,6 +67,13 @@ namespace FasilkomUI
         {
             m_currentChar = (m_currentChar == CharacterNames.Andi) ? CharacterNames.Aini : CharacterNames.Andi;
             TextProcessing.Instance.triggerModel(m_currentChar.ToString());
+        }
+
+        public void OnSliderZoomChange()
+        {
+            var zoomClamp = TouchCameraControl.Instance.zoomClamp;
+            float zoom = zoomClamp.min + (zoomClamp.max - zoomClamp.min) * (1 - m_sliderZoom.value);
+            TouchCameraControl.Instance.UpdateAllCamerasZoom(zoom);
         }
 
         public void BackButton()
