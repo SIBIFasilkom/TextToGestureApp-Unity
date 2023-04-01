@@ -29,6 +29,14 @@ namespace FasilkomUI
         float m_keyboardSize = 0.0f;
         float m_keyboardOpenPercentage = 0.0f;
 
+        [Header("Temp")]
+        [SerializeField] RectTransform m_content;
+        public RectTransform DictionaryContent => m_content;
+        [SerializeField] Button m_uiDictionaryButton_prefab;
+        public Button DictionaryButtonPrefab => m_uiDictionaryButton_prefab;
+        [SerializeField] int m_instantiateButtonCount;
+        public int InstantiateButtonCount => m_instantiateButtonCount;
+
         #region Unity Callbacks
         private void Awake()
         {
