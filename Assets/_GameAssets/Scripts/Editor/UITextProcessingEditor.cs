@@ -15,22 +15,33 @@ public class UITextProcessingEditor : Editor
         DrawDefaultInspector();
 
         UITextProcessing tp = (UITextProcessing)target;
-        if (GUILayout.Button("Cache All Dictionary Buttons"))
+        if (GUILayout.Button("Cache All Text Result Buttons"))
         {
             for(int i=0; i<tp.InstantiateButtonCount; i++)
             {
-                Instantiate(tp.DictionaryButtonPrefab, tp.DictionaryContent);
+                Instantiate(tp.TextResultButton, tp.TextResultContent);
             }
             EditorUtility.SetDirty(target);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
 
-        if (GUILayout.Button("Destroy All Dictionary Buttons"))
+        if (GUILayout.Button("Set All Text Result Buttons Inactive"))
         {
             for (int i = 0; i < tp.InstantiateButtonCount; i++)
             {
-                DestroyImmediate(tp.DictionaryContent.GetChild(0).gameObject);
+                tp.TextResultContent.GetChild(i).gameObject.SetActive(false);
+            }
+            EditorUtility.SetDirty(target);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        if (GUILayout.Button("Destroy All Text Result Buttons"))
+        {
+            for (int i = 0; i < tp.InstantiateButtonCount; i++)
+            {
+                DestroyImmediate(tp.TextResultContent.GetChild(0).gameObject);
             }
             EditorUtility.SetDirty(target);
             AssetDatabase.SaveAssets();

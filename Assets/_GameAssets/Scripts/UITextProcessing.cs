@@ -13,7 +13,11 @@ namespace FasilkomUI
 
         [SerializeField] RectTransform m_wrapper;
 
-        [SerializeField] Text m_textResult;
+        [Header("UI Dictionary")]
+        [SerializeField] RectTransform m_uiDictionary;
+        public bool IsUIDictionaryActive => m_uiDictionary.gameObject.activeSelf;
+        [SerializeField] Text m_uiDictionary_title;
+        [SerializeField] Text m_uiDictionary_content;
 
         [Header("Bottom UI")]
         [SerializeField] Slider m_sliderZoom;
@@ -29,11 +33,11 @@ namespace FasilkomUI
         float m_keyboardSize = 0.0f;
         float m_keyboardOpenPercentage = 0.0f;
 
-        [Header("Temp")]
+        [Header("UI Text Result Buttons")]
         [SerializeField] RectTransform m_content;
-        public RectTransform DictionaryContent => m_content;
-        [SerializeField] Button m_uiDictionaryButton_prefab;
-        public Button DictionaryButtonPrefab => m_uiDictionaryButton_prefab;
+        public RectTransform TextResultContent => m_content;
+        [SerializeField] Button m_uiTextResultButton_prefab;
+        public Button TextResultButton => m_uiTextResultButton_prefab;
         [SerializeField] int m_instantiateButtonCount;
         public int InstantiateButtonCount => m_instantiateButtonCount;
 
@@ -110,24 +114,28 @@ namespace FasilkomUI
 
         public void SendTextResultToUI(int idx, List<Gesture> komponenKata2)
         {
-            string text = "";
-            for (int i = 0; i < komponenKata2.Count; i++)
+            if(m_content.childCount < komponenKata2.Count)
             {
-                string str = "";
-
-                str = komponenKata2[i].id;
-
-                if (idx == i)
-                {
-                    text += " <color=#955BA5>" + str + "</color>";
-                }
-                else
-                {
-                    text += " " + str;
-                }
+                Debug.LogError("UI Text Result Buttons is less than komponen kata, need at least : " + komponenKata2.Count);
+                return;
             }
 
-            m_textResult.text = text;
+            for(int i=0; i<m_content.childCount; i++)
+            {
+                var textResultButton = m_content.GetChild(i);
+                bool useButton = i < komponenKata2.Count;
+                string str = (useButton) ? komponenKata2[i].id : "";
+                bool isSelected = i == idx;
+                textResultButton.GetComponent<UITextResultButton>().InitializeButton(useButton, str, isSelected);
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(m_content);
+        }
+
+        public void OpenDictionary(string sibi_id)
+        {
+            m_uiDictionary.gameObject.SetActive(true);
+            m_uiDictionary_title.text = sibi_id;
         }
 
         private float _GetKeyboardHeightRatio()

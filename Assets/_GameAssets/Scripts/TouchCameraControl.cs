@@ -41,6 +41,9 @@ namespace FasilkomUI
             if (UITutorial.Instance && UITutorial.Instance.gameObject.activeSelf)
                 return;
 
+            if (UITextProcessing.Instance.IsUIDictionaryActive)
+                return;
+
             if (Input.touchCount == 1)
             {
                 float x = Input.touches[0].deltaPosition.x * TouchSensitivity_x;
