@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UI.Extensions;
 
 namespace FasilkomUI.Tutorial
 {
@@ -22,13 +23,11 @@ namespace FasilkomUI.Tutorial
 
         [SerializeField] Tutorial[] m_tutorials;
 
-        [SerializeField] Image m_tutorialImage;
+        [SerializeField] HorizontalScrollSnap m_tutorialImages;
         [SerializeField] Text m_contentText;
         [SerializeField] Text m_countText;
         [SerializeField] Button m_prevButton;
         [SerializeField] Button m_nextButton;
-
-        int m_currentCount = 0;
 
         private void Awake()
         {
@@ -44,20 +43,6 @@ namespace FasilkomUI.Tutorial
 
             bool tutorialIsDone = PlayerPrefs.GetString(PREF_KEY_TUTORIAL_IS_DONE, false.ToString()) == true.ToString();
             gameObject.SetActive(!tutorialIsDone);
-            if (tutorialIsDone)
-                return;
-        }
-
-        private void OnEnable()
-        {
-            m_currentCount = 0;
-            _UpdateTutorial();
-        }
-
-        public void IncreaseCurrentCountButton(int inc)
-        {
-            m_currentCount = Mathf.Clamp(m_currentCount + inc, 0, m_tutorials.Length - 1);
-            _UpdateTutorial();
         }
 
         public void CloseButton()
@@ -66,13 +51,11 @@ namespace FasilkomUI.Tutorial
             PlayerPrefs.SetString(PREF_KEY_TUTORIAL_IS_DONE, true.ToString());
         }
 
-        private void _UpdateTutorial()
+        public void UpdateTutorial()
         {
-            m_tutorialImage.sprite = m_tutorials[m_currentCount].Sprite;
-            m_contentText.text = m_tutorials[m_currentCount].Content;
-            m_countText.text = (m_currentCount + 1) + "/" + m_tutorials.Length;
-            m_prevButton.interactable = m_currentCount > 0;
-            m_nextButton.interactable = m_currentCount + 1 < m_tutorials.Length;
+            int currentCount = m_tutorialImages.CurrentPage;
+            m_contentText.text = m_tutorials[currentCount].Content;
+            m_countText.text = (currentCount + 1) + "/" + m_tutorials.Length;
         }
     }
 }
