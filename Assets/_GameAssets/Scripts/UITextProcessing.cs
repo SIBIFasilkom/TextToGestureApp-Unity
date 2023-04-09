@@ -70,15 +70,15 @@ namespace FasilkomUI
         }
         #endregion
 
-        public void GenerateButton(InputField inputField)
+        public void GenerateButton()
         {
-            TextProcessing.Instance.getInputFromAndroid(inputField.text);
+            TextProcessing.Instance.Generate(m_inputField.text);
         }
 
         public void ToggleCharacterButton()
         {
             m_currentChar = (m_currentChar == CharacterNames.Andi) ? CharacterNames.Aini : CharacterNames.Andi;
-            TextProcessing.Instance.triggerModel(m_currentChar.ToString());
+            TextProcessing.Instance.TriggerModel(m_currentChar.ToString());
         }
 
         public void OnSliderZoomChange()
@@ -96,7 +96,11 @@ namespace FasilkomUI
                 return;
             }
 
-            // kamus kebuka ==> tutup kamus
+            if(IsUIDictionaryActive)
+            {
+                CloseDictionary();
+                return;
+            }
 
             SceneManager.LoadScene("Menuscreen");
         }
@@ -136,6 +140,17 @@ namespace FasilkomUI
         {
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_title.text = sibi_id;
+        }
+
+        public void CloseDictionary()
+        {
+            m_uiDictionary.gameObject.SetActive(false);
+        }
+
+        public void GenerateFromDictionaryButton()
+        {
+            TextProcessing.Instance.Generate(m_uiDictionary_title.text);
+            CloseDictionary();
         }
 
         private float _GetKeyboardHeightRatio()

@@ -29,13 +29,13 @@ namespace FasilkomUI
         [Header("Current Variables")]
         public float currentSliderSpeedValue = 1.0f;
 
-        #region Android Callbacks
-        public void setSliderSpeedValue(string value)
+        #region API Callbacks
+        public void SetSliderSpeedValue(string value)
         {
             currentSliderSpeedValue = float.Parse(value);
         }
 
-        public void triggerModel(string model)
+        public void TriggerModel(string model)
         {
             PlayerPrefs.SetString(PREF_KEY_CURRENT_CHARACTER, model);
 
@@ -46,7 +46,7 @@ namespace FasilkomUI
             m_language.ChangeModel(isAndi);
         }
 
-        public void getInputFromAndroid(string text)
+        public void Generate(string text)
         {
             string rawText = text.ToLower();
 
@@ -60,7 +60,7 @@ namespace FasilkomUI
         {
             Instance = this;
 
-            triggerModel(PlayerPrefs.GetString(PREF_KEY_CURRENT_CHARACTER, CharacterNames.Andi.ToString()));
+            TriggerModel(PlayerPrefs.GetString(PREF_KEY_CURRENT_CHARACTER, CharacterNames.Andi.ToString()));
             StartCoroutine(_SpeedHandler());
         }
         #endregion
