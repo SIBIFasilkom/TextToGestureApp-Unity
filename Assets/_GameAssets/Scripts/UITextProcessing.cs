@@ -136,10 +136,17 @@ namespace FasilkomUI
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_content);
         }
 
+        public void SearchDictionary()
+        {
+            m_uiDictionary.gameObject.SetActive(true);
+            // set ke search mode
+        }
+
         public void OpenDictionary(string sibi_id)
         {
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_title.text = sibi_id;
+            // set ke detail mode
         }
 
         public void CloseDictionary()
