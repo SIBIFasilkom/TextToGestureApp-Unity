@@ -47,6 +47,28 @@ public class UITextProcessingEditor : Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
         }
+
+        if (GUILayout.Button("Cache All UI Dictionary Word Buttons"))
+        {
+            for (int i = 0; i < tp.UIDictionary_Search_PerPageCount; i++)
+            {
+                Instantiate(tp.UIDictionary_Search_WordButtonPrefab, tp.UIDictionary_Search_Content);
+            }
+            EditorUtility.SetDirty(target);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+        if (GUILayout.Button("Destroy All Text Result Buttons"))
+        {
+            for (int i = 0; i < tp.UIDictionary_Search_PerPageCount; i++)
+            {
+                DestroyImmediate(tp.UIDictionary_Search_Content.GetChild(0).gameObject);
+            }
+            EditorUtility.SetDirty(target);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
     }
 }
 #endif

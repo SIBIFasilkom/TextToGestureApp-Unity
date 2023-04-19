@@ -16,8 +16,18 @@ namespace FasilkomUI
         [Header("UI Dictionary")]
         [SerializeField] RectTransform m_uiDictionary;
         public bool IsUIDictionaryActive => m_uiDictionary.gameObject.activeSelf;
-        [SerializeField] Text m_uiDictionary_title;
-        [SerializeField] Text m_uiDictionary_content;
+
+        [SerializeField] RectTransform m_uiDictionary_search;
+        [SerializeField] RectTransform m_uiDictionary_search_content;
+        public RectTransform UIDictionary_Search_Content => m_uiDictionary_search_content;
+        [SerializeField] Button m_uiDictionary_search_wordButtonPrefab;
+        public Button UIDictionary_Search_WordButtonPrefab => m_uiDictionary_search_wordButtonPrefab;
+        [SerializeField] int m_uiDictionary_search_perPageCount;
+        public int UIDictionary_Search_PerPageCount => m_uiDictionary_search_perPageCount;
+
+        [SerializeField] RectTransform m_uiDictionary_detail;
+        [SerializeField] Text m_uiDictionary_detail_titleText;
+        [SerializeField] Text m_uiDictionary_detail_contentText;
 
         [Header("Bottom UI")]
         [SerializeField] Slider m_sliderZoom;
@@ -139,14 +149,18 @@ namespace FasilkomUI
         public void SearchDictionary()
         {
             m_uiDictionary.gameObject.SetActive(true);
-            // set ke search mode
+            m_uiDictionary_detail.gameObject.SetActive(false);
+            m_uiDictionary_search.gameObject.SetActive(true);
+            // aktifin semua ui dictionary word button
         }
 
         public void OpenDictionary(string sibi_id)
         {
             m_uiDictionary.gameObject.SetActive(true);
-            m_uiDictionary_title.text = sibi_id;
-            // set ke detail mode
+            m_uiDictionary_detail.gameObject.SetActive(true);
+            m_uiDictionary_search.gameObject.SetActive(false);
+            m_uiDictionary_detail_titleText.text = sibi_id;
+            m_uiDictionary_detail_contentText.text = "Cara melakukan " + sibi_id + " disini"; // setup contenttext
         }
 
         public void CloseDictionary()
@@ -154,9 +168,15 @@ namespace FasilkomUI
             m_uiDictionary.gameObject.SetActive(false);
         }
 
+        public void SearchButton()
+        {
+            // cek input field search
+            // filter???
+        }
+
         public void GenerateFromDictionaryButton()
         {
-            TextProcessing.Instance.Generate(m_uiDictionary_title.text);
+            TextProcessing.Instance.Generate(m_uiDictionary_detail_titleText.text);
             CloseDictionary();
         }
 
