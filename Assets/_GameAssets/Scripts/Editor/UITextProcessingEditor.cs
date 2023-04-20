@@ -59,7 +59,7 @@ public class UITextProcessingEditor : Editor
             AssetDatabase.Refresh();
         }
 
-        if (GUILayout.Button("Destroy All Text Result Buttons"))
+        if (GUILayout.Button("Destroy All UI Dictionary Word Buttons"))
         {
             for (int i = 0; i < tp.UIDictionary_Search_PerPageCount; i++)
             {

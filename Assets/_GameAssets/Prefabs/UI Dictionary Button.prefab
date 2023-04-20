@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1818663854661292864}
   - component: {fileID: 1919382889360120687}
   - component: {fileID: 8935519814534233342}
+  - component: {fileID: 4834622634384014142}
   m_Layer: 5
   m_Name: UI Dictionary Button
   m_TagString: Untagged
@@ -123,7 +124,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1818663854661292864}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 4834622634384014142}
+        m_TargetAssemblyTypeName: FasilkomUI.UIDictionaryWordButton, Assembly-CSharp
+        m_MethodName: OpenDictionaryButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &8935519814534233342
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +152,19 @@ MonoBehaviour:
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.1254902}
   m_EffectDistance: {x: 1, y: -1}
   m_UseGraphicAlpha: 1
+--- !u!114 &4834622634384014142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3660371914420505855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cac74d4ae4f08cd4f80c53519dacc2ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_text: {fileID: 149936589042605844}
 --- !u!1 &5639613372266695295
 GameObject:
   m_ObjectHideFlags: 0

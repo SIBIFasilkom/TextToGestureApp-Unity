@@ -18,6 +18,7 @@ namespace FasilkomUI
         public bool IsUIDictionaryActive => m_uiDictionary.gameObject.activeSelf;
 
         [SerializeField] RectTransform m_uiDictionary_search;
+        [SerializeField] InputField m_uiDictioanry_search_inputField;
         [SerializeField] RectTransform m_uiDictionary_search_content;
         public RectTransform UIDictionary_Search_Content => m_uiDictionary_search_content;
         [SerializeField] Button m_uiDictionary_search_wordButtonPrefab;
@@ -80,6 +81,7 @@ namespace FasilkomUI
         }
         #endregion
 
+        #region Main Wrapper
         public void GenerateButton()
         {
             TextProcessing.Instance.Generate(m_inputField.text);
@@ -145,13 +147,16 @@ namespace FasilkomUI
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(m_content);
         }
+        #endregion
 
+        #region UI Dictionary
         public void SearchDictionary()
         {
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_detail.gameObject.SetActive(false);
             m_uiDictionary_search.gameObject.SetActive(true);
             // aktifin semua ui dictionary word button
+            // pake uidictionarywordbutton.initialize
         }
 
         public void OpenDictionary(string sibi_id)
@@ -172,6 +177,7 @@ namespace FasilkomUI
         {
             // cek input field search
             // filter???
+            // pake uidictionarywordbutton.initialize
         }
 
         public void GenerateFromDictionaryButton()
@@ -179,6 +185,7 @@ namespace FasilkomUI
             TextProcessing.Instance.Generate(m_uiDictionary_detail_titleText.text);
             CloseDictionary();
         }
+        #endregion
 
         private float _GetKeyboardHeightRatio()
         {
