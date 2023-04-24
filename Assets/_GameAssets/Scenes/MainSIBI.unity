@@ -44841,9 +44841,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6312fecd00a22fa41a28ebe31ee8be0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_data_languageLookup: {fileID: 0}
-  m_data_alt_languageLookup: {fileID: 0}
-  m_data_imbuhan_languageLookup: []
+  m_data_languageLookup: {fileID: 4900000, guid: ba14203cbd73d5542af1bc35fbb424ef,
+    type: 3}
+  m_data_alt_languageLookup: {fileID: 4900000, guid: e4a7428b696ba9545a440fb9c0170026,
+    type: 3}
+  m_data_imbuhan_languageLookup:
+  - {fileID: 4900000, guid: 9ccea1f22c8a2454a8b93c4de5441ee3, type: 3}
   m_data_kBBILookup: {fileID: 0}
   m_data_imbuhan_kBBILookup: []
   m_data_slangLookup: {fileID: 0}
