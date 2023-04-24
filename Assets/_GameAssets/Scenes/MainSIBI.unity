@@ -1142,7 +1142,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -48.000015}
+  m_AnchoredPosition: {x: 0, y: -48}
   m_SizeDelta: {x: 0, y: -96}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &48653877
@@ -1179,7 +1179,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -95.999954}
+  m_AnchoredPosition: {x: 0, y: -95.99994}
   m_SizeDelta: {x: 0, y: -96}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &53171933
@@ -30465,7 +30465,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -48.000015}
+  m_AnchoredPosition: {x: 0, y: -48}
   m_SizeDelta: {x: 0, y: -96}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &1396814021
@@ -41504,7 +41504,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -95.999954}
+  m_AnchoredPosition: {x: 0, y: -95.99994}
   m_SizeDelta: {x: 0, y: -96}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &1811060299
@@ -44841,9 +44841,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6312fecd00a22fa41a28ebe31ee8be0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Data_SlangLookup: {fileID: 4900000, guid: 9ff1c905125d9de4e9e8b32a1fe429ab, type: 3}
-  Data_TableLookup: {fileID: 4900000, guid: a588c9dbf222f324c94edd12802c37f1, type: 3}
-  Data_GestureLookup: {fileID: 4900000, guid: 14d46d12041967e45ade9032bf4625dc, type: 3}
+  m_data_languageLookup: {fileID: 0}
+  m_data_alt_languageLookup: {fileID: 0}
+  m_data_imbuhan_languageLookup: []
+  m_data_kBBILookup: {fileID: 0}
+  m_data_imbuhan_kBBILookup: []
+  m_data_slangLookup: {fileID: 0}
   _Andi: {fileID: 1811213768}
   _AndiTongue: {fileID: 777939287}
   _AndiBody: {fileID: 781687230}

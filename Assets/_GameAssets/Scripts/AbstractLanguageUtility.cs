@@ -18,17 +18,16 @@ namespace FasilkomUI
          * U : GKS contohnya Gesture
          * </summary>
          */
-        public static Dictionary<string, U> LoadSKGLookup<T, U>(string jsonData) where T : AbstractSKGDictionary<U> where U : AbstractSKG
+        public static Dictionary<string, U> LoadDatabaseLookup<T, U>(string jsonData) where T : AbstractDatabaseDictionary<U> where U : AbstractDatabase
         {
             T tempList = JsonUtility.FromJson<T>(jsonData);
             Dictionary<string, U> tableLookup = new Dictionary<string, U>();
-            foreach (U skg in tempList.listSKG)
+            foreach (U skg in tempList.list)
             {
-                if(skg.GetType() == typeof(Kata))
+                if(tableLookup.ContainsKey(skg.id))
                 {
-                    (skg as Kata).awalans = (skg as Kata).awalan.Split(';');
-                    (skg as Kata).akhirans = (skg as Kata).akhiran.Split(';');
-                    (skg as Kata).sukus = (skg as Kata).suku.Split(';');
+                    Debug.LogWarning("Loading " + skg.GetType() + " : " + skg.id + " is duplicated & has already been added, skipping... ");
+                    continue;
                 }
 
                 tableLookup.Add(skg.id, skg);

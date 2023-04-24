@@ -128,7 +128,7 @@ namespace FasilkomUI
             m_inputCounter.color = (inputField.text.Length < inputField.characterLimit) ? m_inputCounter_defaultColor : m_inputCounter_maxColor;
         }
 
-        public void SendTextResultToUI(int idx, List<Gesture> komponenKata2)
+        public void SendTextResultToUI(int idx, List<AbstractDatabase> komponenKata2)
         {
             if(m_content.childCount < komponenKata2.Count)
             {
