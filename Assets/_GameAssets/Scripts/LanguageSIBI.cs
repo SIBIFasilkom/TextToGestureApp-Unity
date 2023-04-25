@@ -29,9 +29,6 @@ namespace FasilkomUI.SIBI
         public string sibi_id;
         public string sibi_id_awalan;
         public string sibi_id_akhiran;
-
-        public string[] awalans;
-        public string[] akhirans;
     }
 
     [Serializable] public class SIBIDictionary : AbstractDatabaseDictionary<SIBI> { }
@@ -80,6 +77,9 @@ namespace FasilkomUI.SIBI
 
         private void _SearchKeyFromTable(List<SIBI> sibiList, string rawToken)
         {
+            if (string.IsNullOrEmpty(rawToken))
+                return;
+
             if (m_table_sibi.ContainsKey(rawToken))
             {
                 sibiList.Add(m_table_sibi[rawToken]);
@@ -93,26 +93,41 @@ namespace FasilkomUI.SIBI
             }
 
             // ganti ke foreach
-            // tambah akhiran awalan juga
             if (m_table_imbuhan_sibi.ContainsKey(rawToken))
             {
+                var awalans = m_table_imbuhan_sibi[rawToken].sibi_id_awalan.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var awalan in awalans)
+                    _SearchKeyFromTable(sibiList, awalan);
+
                 _SearchKeyFromTable(sibiList, m_table_imbuhan_sibi[rawToken].sibi_id);
+
+                var akhirans = m_table_imbuhan_sibi[rawToken].sibi_id_akhiran.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var akhiran in akhirans)
+                    _SearchKeyFromTable(sibiList, akhiran);
+
                 return;
             }
 
             // kbbi
             // imbuhan kbbi
             // slang
-            // majemuk strip, split -
+
+            if(AbstractLanguageUtility.IsMajemuk(rawToken))
+            {
+                var majemukTokens = rawToken.Split('-', StringSplitOptions.RemoveEmptyEntries);
+                foreach (var majemukToken in majemukTokens)
+                    _SearchKeyFromTable(sibiList, majemukToken);
+
+                return;
+            }
+
             // cek nomor, modulo setiap anu
             // cek time, liat pake .
             if(rawToken.Length > 1)
             {
                 var tokenSplits = AbstractLanguageUtility.SplitString(rawToken);
                 foreach(string tokenSplit in tokenSplits)
-                {
                     _SearchKeyFromTable(sibiList, tokenSplit);
-                }
 
                 return;
             }
