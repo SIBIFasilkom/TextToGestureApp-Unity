@@ -52,6 +52,7 @@ namespace FasilkomUI.SIBI
 
             m_table_sibi = AbstractLanguageUtility.LoadDatabaseLookup<SIBIDictionary, SIBI>(m_data_languageLookup.ToString());
             m_table_alt_sibi = AbstractLanguageUtility.LoadDatabaseLookup<AltSIBIDictionary, Alt_SIBI>(m_data_alt_languageLookup.ToString());
+            // ganti ke foreach
             m_table_imbuhan_sibi = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[0].ToString());
         }
         #endregion
@@ -68,27 +69,55 @@ namespace FasilkomUI.SIBI
             //m_animancerBodyCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, komponenKata2, true));
 
             // cek setiap rawtoken apakah token tersebut ada di database
+            List<SIBI> sibiList = new List<SIBI>();
             foreach(string rawToken in rawTokens)
             {
-                if (m_table_sibi.ContainsKey(rawToken))
-                {
-                    //m_table_sibi[rawToken].id;
-                    // masukin ke list?
-                    continue;
-                }
-
-                if (m_table_alt_sibi.ContainsKey(rawToken))
-                {
-                    // ambil sibi id, search ulang?
-                    continue;
-                }
-
-                if (m_table_imbuhan_sibi.ContainsKey(rawToken))
-                {
-                    // search ulang
-                    continue;
-                }
+                _SearchKeyFromTable(sibiList, rawToken);
             }
+
+            UITextProcessing.Instance.SendTextResultToUI(0, sibiList);
+        }
+
+        private void _SearchKeyFromTable(List<SIBI> sibiList, string rawToken)
+        {
+            if (m_table_sibi.ContainsKey(rawToken))
+            {
+                sibiList.Add(m_table_sibi[rawToken]);
+                return;
+            }
+
+            if (m_table_alt_sibi.ContainsKey(rawToken))
+            {
+                _SearchKeyFromTable(sibiList, m_table_alt_sibi[rawToken].sibi_id);
+                return;
+            }
+
+            // ganti ke foreach
+            // tambah akhiran awalan juga
+            if (m_table_imbuhan_sibi.ContainsKey(rawToken))
+            {
+                _SearchKeyFromTable(sibiList, m_table_imbuhan_sibi[rawToken].sibi_id);
+                return;
+            }
+
+            // kbbi
+            // imbuhan kbbi
+            // slang
+            // majemuk strip, split -
+            // cek nomor, modulo setiap anu
+            // cek time, liat pake .
+            if(rawToken.Length > 1)
+            {
+                var tokenSplits = AbstractLanguageUtility.SplitString(rawToken);
+                foreach(string tokenSplit in tokenSplits)
+                {
+                    _SearchKeyFromTable(sibiList, tokenSplit);
+                }
+
+                return;
+            }
+
+            Debug.LogWarning("Somehow, unable to process this token : " + rawToken);
         }
 
         //protected IEnumerator _AnimationSequence(NamedAnimancerComponent[] animancers, List<Sibi> gestures, bool sendToUI = false)
