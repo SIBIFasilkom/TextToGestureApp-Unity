@@ -112,7 +112,7 @@ namespace FasilkomUI.SIBI
             // imbuhan kbbi
             // slang
 
-            if(AbstractLanguageUtility.IsMajemuk(rawToken))
+            if(AbstractLanguageUtility.CheckContainStrip(rawToken))
             {
                 var majemukTokens = rawToken.Split('-', StringSplitOptions.RemoveEmptyEntries);
                 foreach (var majemukToken in majemukTokens)
@@ -121,9 +121,88 @@ namespace FasilkomUI.SIBI
                 return;
             }
 
-            // cek nomor, modulo setiap anu
-            // cek time, liat pake .
-            if(rawToken.Length > 1)
+            // kalo minus??
+            // p.s : baru di handle sampe juta doang, belum milyar
+            // definately butuh di simplify lol
+            if (AbstractLanguageUtility.CheckNeedToSplitNumeric(rawToken))
+            {
+                int parsedToken = Mathf.Abs(int.Parse(rawToken));
+
+                if (parsedToken >= 2000000)
+                {
+                    _SearchKeyFromTable(sibiList, "" + (parsedToken / 1000000));
+                    _SearchKeyFromTable(sibiList, "-juta");
+                    if (parsedToken % 1000000 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000000));
+                }
+
+                if (parsedToken >= 1000000 && parsedToken < 2000000)
+                {
+                    _SearchKeyFromTable(sibiList, "1000000");
+                    if (parsedToken % 1000000 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000000));
+                }
+
+                if (parsedToken >= 2000 && parsedToken < 1000000)
+                {
+                    _SearchKeyFromTable(sibiList, "" + (parsedToken / 1000));
+                    _SearchKeyFromTable(sibiList, "-ribu");
+                    if (parsedToken % 1000 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000));
+                }
+
+                if (parsedToken >= 1000 && parsedToken < 2000)
+                {
+                    _SearchKeyFromTable(sibiList, "1000");
+                    if (parsedToken % 1000 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000));
+                }
+
+                if (parsedToken >= 200 && parsedToken < 1000)
+                {
+                    _SearchKeyFromTable(sibiList, "" + (parsedToken / 100));
+                    _SearchKeyFromTable(sibiList, "-ratus");
+                    if(parsedToken % 100 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 100));
+                }
+
+                if (parsedToken >= 100 && parsedToken < 200)
+                {
+                    _SearchKeyFromTable(sibiList, "100");
+                    if(parsedToken % 100 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 100));
+                }
+
+                if (parsedToken >= 20 && parsedToken < 100)
+                {
+                    _SearchKeyFromTable(sibiList, "" + (parsedToken / 10));
+                    _SearchKeyFromTable(sibiList, "-puluh");
+                    if (parsedToken % 10 > 0)
+                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 10));
+                }
+
+                if(parsedToken >= 12 && parsedToken < 20)
+                {
+                    _SearchKeyFromTable(sibiList, "" + (parsedToken % 10));
+                    _SearchKeyFromTable(sibiList, "-belas");
+                }
+                return;
+            }
+
+            if (AbstractLanguageUtility.CheckIsTimeFormat(rawToken))
+            {
+                var timeTokens = rawToken.Split('.', StringSplitOptions.RemoveEmptyEntries);
+                if(timeTokens.Length == 2)
+                {
+                    _SearchKeyFromTable(sibiList, timeTokens[0]);
+                    _SearchKeyFromTable(sibiList, "lebih");
+                    _SearchKeyFromTable(sibiList, timeTokens[1]);
+
+                    return;
+                }
+            }
+
+            if (rawToken.Length > 1)
             {
                 var tokenSplits = AbstractLanguageUtility.SplitString(rawToken);
                 foreach(string tokenSplit in tokenSplits)
@@ -132,7 +211,7 @@ namespace FasilkomUI.SIBI
                 return;
             }
 
-            Debug.LogWarning("Somehow, unable to process this token : " + rawToken);
+            Debug.LogWarning("Unable to process this token : " + rawToken);
         }
 
         //protected IEnumerator _AnimationSequence(NamedAnimancerComponent[] animancers, List<Sibi> gestures, bool sendToUI = false)

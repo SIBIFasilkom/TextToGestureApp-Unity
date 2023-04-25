@@ -58,9 +58,31 @@ namespace FasilkomUI
          * Ex. Majemuk : orang-orang
          * </summary>
          */
-        public static bool IsMajemuk(string word)
+        public static bool CheckContainStrip(string word)
         {
             return Regex.IsMatch(word, @"[-]");
+        }
+
+        /**
+         * <summary>
+         * Cek apakah ini kata majemuk atau bukan
+         * Ex. Majemuk : orang-orang
+         * </summary>
+         */
+        public static bool CheckNeedToSplitNumeric(string word)
+        {
+            return Regex.IsMatch(word, @"^[0-9]+$");
+        }
+
+        /**
+         * <summary>
+         * Cek apakah ini kata majemuk atau bukan
+         * Ex. Majemuk : orang-orang
+         * </summary>
+         */
+        public static bool CheckIsTimeFormat(string word)
+        {
+            return Regex.IsMatch(word, @"(?:[01][0-9]|2[0-3]|[1-9])[.][0-5][0-9]");
         }
 
         /**
