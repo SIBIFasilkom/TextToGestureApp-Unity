@@ -9,7 +9,7 @@ namespace FasilkomUI
     {
         [SerializeField] Text m_text;
 
-        public void InitializeButton(bool isUseButton, string str)
+        public void InitializeButton(bool isUseButton, string str = "")
         {
             gameObject.SetActive(isUseButton);
             m_text.text = str;

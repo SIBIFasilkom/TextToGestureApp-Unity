@@ -51,6 +51,8 @@ namespace FasilkomUI.SIBI
             m_table_alt_sibi = AbstractLanguageUtility.LoadDatabaseLookup<AltSIBIDictionary, Alt_SIBI>(m_data_alt_languageLookup.ToString());
             // ganti ke foreach
             m_table_imbuhan_sibi = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[0].ToString());
+
+            UITextProcessing.Instance.InitializeUIDictionaryDatabase(m_table_sibi);
         }
         #endregion
 

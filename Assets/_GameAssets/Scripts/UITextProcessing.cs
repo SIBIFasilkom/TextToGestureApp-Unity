@@ -18,7 +18,7 @@ namespace FasilkomUI
         public bool IsUIDictionaryActive => m_uiDictionary.gameObject.activeSelf;
 
         [SerializeField] RectTransform m_uiDictionary_search;
-        [SerializeField] InputField m_uiDictioanry_search_inputField;
+        [SerializeField] InputField m_uiDictionary_search_inputField;
         [SerializeField] RectTransform m_uiDictionary_search_content;
         public RectTransform UIDictionary_Search_Content => m_uiDictionary_search_content;
         [SerializeField] Button m_uiDictionary_search_wordButtonPrefab;
@@ -29,6 +29,8 @@ namespace FasilkomUI
         [SerializeField] RectTransform m_uiDictionary_detail;
         [SerializeField] Text m_uiDictionary_detail_titleText;
         [SerializeField] Text m_uiDictionary_detail_contentText;
+
+        List<string> m_languageKeys = new List<string>();
 
         [Header("Bottom UI")]
         [SerializeField] Slider m_sliderZoom;
@@ -150,13 +152,23 @@ namespace FasilkomUI
         #endregion
 
         #region UI Dictionary
+        public void InitializeUIDictionaryDatabase<T>(Dictionary<string, T> languageDatabase) where T : AbstractDatabase
+        {
+            m_languageKeys = new List<string>(languageDatabase.Keys);
+            for (int i = 0; i < m_uiDictionary_search_content.childCount; i++)
+            {
+                var wordButtonChild = m_uiDictionary_search_content.GetChild(i);
+                var wordButton = wordButtonChild.GetComponent<UIDictionaryWordButton>();
+                var isActive = i < m_languageKeys.Count;
+                wordButton.InitializeButton(isActive, (isActive) ? m_languageKeys[i] : "");
+            }
+        }
+
         public void SearchDictionary()
         {
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_detail.gameObject.SetActive(false);
             m_uiDictionary_search.gameObject.SetActive(true);
-            // aktifin semua ui dictionary word button
-            // pake uidictionarywordbutton.initialize
         }
 
         public void OpenDictionary(string sibi_id)
@@ -176,6 +188,7 @@ namespace FasilkomUI
         public void SearchButton()
         {
             // cek input field search
+            var searchText = m_uiDictionary_search_inputField.text;
             // filter???
             // pake uidictionarywordbutton.initialize
         }

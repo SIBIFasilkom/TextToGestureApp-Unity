@@ -21,6 +21,7 @@ namespace FasilkomUI
         public const string PREF_KEY_CURRENT_CHARACTER = "currentCharacter";
 
         [SerializeField] AbstractLanguage m_language;
+        public AbstractLanguage Language => m_language;
 
         [Header("Character")]
         [SerializeField] GameObject _AndiModel;
