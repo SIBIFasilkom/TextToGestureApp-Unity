@@ -216,6 +216,7 @@ namespace FasilkomUI
 
         private void _HandleSearchContentChild(string searchText = "")
         {
+            // bikin coroutine, sama di up ke atas scrollbarnya tolong
             for (int i = 0; i < m_uiDictionary_search_content.childCount; i++)
             {
                 var wordButtonChild = m_uiDictionary_search_content.GetChild(i);
