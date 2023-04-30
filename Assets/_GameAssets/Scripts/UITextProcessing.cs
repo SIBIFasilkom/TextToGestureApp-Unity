@@ -155,13 +155,7 @@ namespace FasilkomUI
         public void InitializeUIDictionaryDatabase<T>(Dictionary<string, T> languageDatabase) where T : AbstractDatabase
         {
             m_languageKeys = new List<string>(languageDatabase.Keys);
-            for (int i = 0; i < m_uiDictionary_search_content.childCount; i++)
-            {
-                var wordButtonChild = m_uiDictionary_search_content.GetChild(i);
-                var wordButton = wordButtonChild.GetComponent<UIDictionaryWordButton>();
-                var isActive = i < m_languageKeys.Count;
-                wordButton.InitializeButton(isActive, (isActive) ? m_languageKeys[i] : "");
-            }
+            _HandleSearchContentChild();
         }
 
         public void SearchDictionary()
@@ -187,10 +181,8 @@ namespace FasilkomUI
 
         public void SearchButton()
         {
-            // cek input field search
             var searchText = m_uiDictionary_search_inputField.text;
-            // filter???
-            // pake uidictionarywordbutton.initialize
+            _HandleSearchContentChild(searchText);
         }
 
         public void GenerateFromDictionaryButton()
@@ -220,6 +212,17 @@ namespace FasilkomUI
 #else
         return (float)TouchScreenKeyboard.area.height / Screen.height;
 #endif
+        }
+
+        private void _HandleSearchContentChild(string searchText = "")
+        {
+            for (int i = 0; i < m_uiDictionary_search_content.childCount; i++)
+            {
+                var wordButtonChild = m_uiDictionary_search_content.GetChild(i);
+                var wordButton = wordButtonChild.GetComponent<UIDictionaryWordButton>();
+                var isActive = i < m_languageKeys.Count && m_languageKeys[i].Contains(searchText);
+                wordButton.InitializeButton(isActive, (isActive) ? m_languageKeys[i] : "");
+            }
         }
     }
 }
