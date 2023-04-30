@@ -77,6 +77,11 @@ namespace FasilkomUI.SIBI
             UITextProcessing.Instance.SendTextResultToUI(0, sibiList);
         }
 
+        public override string GetHowToLanguage(string key)
+        {
+            return m_table_sibi[key].detail;
+        }
+
         private void _SearchKeyFromTable(List<SIBI> sibiList, string rawToken)
         {
             if (string.IsNullOrEmpty(rawToken))

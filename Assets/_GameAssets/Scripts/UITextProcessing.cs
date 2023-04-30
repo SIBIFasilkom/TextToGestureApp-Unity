@@ -165,13 +165,15 @@ namespace FasilkomUI
             m_uiDictionary_search.gameObject.SetActive(true);
         }
 
-        public void OpenDictionary(string sibi_id)
+        public void OpenDictionary(string language_id)
         {
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_detail.gameObject.SetActive(true);
             m_uiDictionary_search.gameObject.SetActive(false);
-            m_uiDictionary_detail_titleText.text = sibi_id;
-            m_uiDictionary_detail_contentText.text = "Cara melakukan " + sibi_id + " disini"; // setup contenttext
+
+            var contentLanguage = TextProcessing.Instance.Language.GetHowToLanguage(language_id);
+            m_uiDictionary_detail_titleText.text = language_id;
+            m_uiDictionary_detail_contentText.text = contentLanguage;
         }
 
         public void CloseDictionary()

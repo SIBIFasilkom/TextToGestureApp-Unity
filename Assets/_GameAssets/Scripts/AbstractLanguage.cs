@@ -79,6 +79,7 @@ namespace FasilkomUI
         #endregion
 
         public abstract void ConvertToAnimationFromToken(string[] rawToken);
+        public abstract string GetHowToLanguage(string key);
 
         public void ChangeModel(bool isAndi)
         {
