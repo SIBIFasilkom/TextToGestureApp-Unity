@@ -74,6 +74,7 @@ namespace FasilkomUI.SIBI
                 _SearchKeyFromTable(sibiList, rawToken);
             }
 
+            // jalanin coroutin
             UITextProcessing.Instance.SendTextResultToUI(0, sibiList);
         }
 
