@@ -40,7 +40,7 @@ namespace FasilkomUI.SIBI
     {
         Dictionary<string, SIBI> m_table_sibi;
         Dictionary<string, Alt_SIBI> m_table_alt_sibi;
-        Dictionary<string, Imbuhan_SIBI> m_table_imbuhan_sibi;
+        Dictionary<string, Imbuhan_SIBI>[] m_table_imbuhan_sibi;
 
         #region Unity Callbacks
         protected override void Awake()
@@ -49,8 +49,12 @@ namespace FasilkomUI.SIBI
 
             m_table_sibi = AbstractLanguageUtility.LoadDatabaseLookup<SIBIDictionary, SIBI>(m_data_languageLookup.ToString());
             m_table_alt_sibi = AbstractLanguageUtility.LoadDatabaseLookup<AltSIBIDictionary, Alt_SIBI>(m_data_alt_languageLookup.ToString());
-            // ganti ke foreach
-            m_table_imbuhan_sibi = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[0].ToString());
+
+            m_table_imbuhan_sibi = new Dictionary<string, Imbuhan_SIBI>[m_data_imbuhan_languageLookup.Length];
+            for (int i=0; i<m_data_imbuhan_languageLookup.Length; i++)
+            {
+                m_table_imbuhan_sibi[i] = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[i].ToString());
+            }
 
             UITextProcessing.Instance.InitializeUIDictionaryDatabase(m_table_sibi);
         }
@@ -58,10 +62,6 @@ namespace FasilkomUI.SIBI
 
         public override void ConvertToAnimationFromToken(string[] rawTokens)
         {
-            //string[] correctedToken = _SlangChecker(rawToken);
-            //List<Gesture> komponenKata = _DeconstructWordForMouth(correctedToken);
-            //List<Gesture> komponenKata2 = _DeconstructWordForBody(correctedToken);
-
             List<SIBI> sibiList = new List<SIBI>();
             foreach(string rawToken in rawTokens)
             {
@@ -95,21 +95,23 @@ namespace FasilkomUI.SIBI
                 _SearchKeyFromTable(sibiList, m_table_alt_sibi[rawToken].sibi_id);
                 return;
             }
-
-            // ganti ke foreach
-            if (m_table_imbuhan_sibi.ContainsKey(rawToken))
+            
+            for(int i=0; i<m_table_imbuhan_sibi.Length; i++)
             {
-                var awalans = m_table_imbuhan_sibi[rawToken].sibi_id_awalan.Split(';', StringSplitOptions.RemoveEmptyEntries);
-                foreach (var awalan in awalans)
-                    _SearchKeyFromTable(sibiList, awalan);
+                if (m_table_imbuhan_sibi[i].ContainsKey(rawToken))
+                {
+                    var awalans = m_table_imbuhan_sibi[i][rawToken].sibi_id_awalan.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var awalan in awalans)
+                        _SearchKeyFromTable(sibiList, awalan);
 
-                _SearchKeyFromTable(sibiList, m_table_imbuhan_sibi[rawToken].sibi_id);
+                    _SearchKeyFromTable(sibiList, m_table_imbuhan_sibi[i][rawToken].sibi_id);
 
-                var akhirans = m_table_imbuhan_sibi[rawToken].sibi_id_akhiran.Split(';', StringSplitOptions.RemoveEmptyEntries);
-                foreach (var akhiran in akhirans)
-                    _SearchKeyFromTable(sibiList, akhiran);
+                    var akhirans = m_table_imbuhan_sibi[i][rawToken].sibi_id_akhiran.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var akhiran in akhirans)
+                        _SearchKeyFromTable(sibiList, akhiran);
 
-                return;
+                    return;
+                }
             }
 
             // kbbi
@@ -125,7 +127,6 @@ namespace FasilkomUI.SIBI
                 return;
             }
 
-            // kalo minus??
             // p.s : baru di handle sampe juta doang, belum milyar
             // definately butuh di simplify lol
             if (AbstractLanguageUtility.CheckNeedToSplitNumeric(rawToken))
