@@ -12,9 +12,9 @@ namespace FasilkomUI.SIBI
     [Serializable]
     public class SIBI : AbstractDatabase
     {
+        public string suku;
         public string detail;
         public string category;
-        // suku
     }
 
     [Serializable]
