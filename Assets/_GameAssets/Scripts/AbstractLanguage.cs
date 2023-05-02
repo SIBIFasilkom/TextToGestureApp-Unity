@@ -15,6 +15,11 @@ namespace FasilkomUI
         public string id;
     }
 
+    public abstract class AbstractDatabaseLanguage : AbstractDatabase
+    {
+        public string suku;
+    }
+
     [Serializable]
     public abstract class AbstractDatabaseDictionary<T> where T : AbstractDatabase
     {
@@ -67,8 +72,9 @@ namespace FasilkomUI
         protected NamedAnimancerComponent m_animancer;
         protected NamedAnimancerComponent m_animancerTongue;
         protected NamedAnimancerComponent m_animancerBody;
-        protected Coroutine m_animancerHeadTongueCoroutine;
-        protected Coroutine m_animancerBodyCoroutine;
+        //protected Coroutine m_animancerHeadTongueCoroutine;
+        //protected Coroutine m_animancerBodyCoroutine;
+        protected Coroutine m_animancerCoroutine;
 
         #region Unity Callbacks
         protected virtual void Awake()
@@ -88,26 +94,25 @@ namespace FasilkomUI
             m_animancerBody = (isAndi) ? _AndiBody : _AiniBody;
         }
 
-        protected IEnumerator _AnimationSequence<T>(NamedAnimancerComponent[] animancers, List<T> language_id, bool sendToUI = false) where T : AbstractDatabase
+        protected IEnumerator _AnimationSequence<T>(List<T> language_id) where T : AbstractDatabaseLanguage
         {
             float fadeDuration = 0.25f;
             float noGestureAnimationWait = 1.0f;
-            int idx = 0;
+            
+            AnimancerState state = m_animancerBody.States.Current;
+            Coroutine headTongueAnimancerCoroutine = null;
 
-            AnimancerState state = animancers[0].States.Current;
-
-            foreach (AbstractDatabase language in language_id)
+            for(int i=0; i<language_id.Count; i++)
             {
-                if (sendToUI)
-                {
-                    UITextProcessing.Instance.SendTextResultToUI(idx, language_id);
-                    idx += 1;
-                }
+                UITextProcessing.Instance.SendTextResultToUI(i, language_id);
 
-                _PlayAllAnimancer(animancers, language.id, fadeDuration, out state);
+                state = m_animancerBody.TryPlay(language_id[i].id, fadeDuration, FadeMode.FromStart);
                 if (state != null)
                 {
-                    while (state.Time < state.Length)
+                    if (headTongueAnimancerCoroutine != null) StopCoroutine(headTongueAnimancerCoroutine);
+                    headTongueAnimancerCoroutine = StartCoroutine(_PlayHeadTongueAnimancers(language_id[i].suku, fadeDuration));
+
+                    while (state.Time < state.Length) // next : nungguin suku juga
                     {
                         yield return null;
                     }
@@ -116,21 +121,49 @@ namespace FasilkomUI
                 }
                 else
                 {
-                    Debug.LogWarning("Animation not found for " + animancers[0].name + " : " + language.id);
-                    _PlayAllAnimancer(animancers, "idle", fadeDuration, out state);
+                    Debug.LogWarning("Animation body not found for : " + language_id[i].id);
+                    _PlayAllAnimancer("idle", fadeDuration, out state);
                     yield return new WaitForSecondsRealtime(noGestureAnimationWait);
                 }
             }
 
-            _PlayAllAnimancer(animancers, "idle", fadeDuration, out state);
+            if (headTongueAnimancerCoroutine != null) StopCoroutine(headTongueAnimancerCoroutine);
+            _PlayAllAnimancer("idle", fadeDuration, out state);
         }
 
-        protected void _PlayAllAnimancer(NamedAnimancerComponent[] animancers, string key, float fadeDuration, out AnimancerState state)
+        protected void _PlayAllAnimancer(string key, float fadeDuration, out AnimancerState state)
         {
-            state = null;
-            foreach (NamedAnimancerComponent animancer in animancers)
+            state = m_animancerBody.TryPlay(key, fadeDuration, FadeMode.FromStart);
+            m_animancer.TryPlay(key, fadeDuration, FadeMode.FromStart);
+            m_animancerTongue.TryPlay(key, fadeDuration, FadeMode.FromStart);
+        }
+
+        protected IEnumerator _PlayHeadTongueAnimancers(string suku, float fadeDuration)
+        {
+            var sukuSplit = suku.Split(';');
+
+            for(int i=0; i<sukuSplit.Length; i++)
             {
-                state = animancer.TryPlay(key, fadeDuration, FadeMode.FromStart);
+                var headState = m_animancer.TryPlay(sukuSplit[i], fadeDuration, FadeMode.FromStart);
+                var tongueState = m_animancerTongue.TryPlay(sukuSplit[i], fadeDuration, FadeMode.FromStart);
+                if (headState != null && tongueState != null)
+                {
+                    while (headState.Time < headState.Length && tongueState.Time < tongueState.Length)
+                    {
+                        yield return null;
+                    }
+
+                    yield return new WaitForSeconds(0.1f);
+                } else
+                {
+                    if (headState == null)
+                        Debug.LogWarning("Animation head not found for : " + sukuSplit[i]);
+
+                    if (tongueState == null)
+                        Debug.LogWarning("Animation tongue not found for : " + sukuSplit[i]);
+
+                    yield return new WaitForSeconds(0.1f);
+                }
             }
         }
     }

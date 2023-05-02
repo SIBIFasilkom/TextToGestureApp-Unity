@@ -10,9 +10,8 @@ namespace FasilkomUI.SIBI
 {
     #region Database Classes
     [Serializable]
-    public class SIBI : AbstractDatabase
+    public class SIBI : AbstractDatabaseLanguage
     {
-        public string suku;
         public string detail;
         public string category;
     }
@@ -69,9 +68,11 @@ namespace FasilkomUI.SIBI
             }
 
             //if (m_animancerHeadTongueCoroutine != null) StopCoroutine(m_animancerHeadTongueCoroutine);
-            if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
-            //m_animancerHeadTongueCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, sibiList)); // ganti ke suku kata?
-            m_animancerBodyCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, sibiList, true));
+            //if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
+            //m_animancerHeadTongueCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, sibiList));
+            //m_animancerBodyCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, sibiList, true));
+            if (m_animancerCoroutine != null) StopCoroutine(m_animancerCoroutine);
+            m_animancerCoroutine = StartCoroutine(_AnimationSequence(sibiList));
         }
 
         public override string GetHowToLanguage(string key)
