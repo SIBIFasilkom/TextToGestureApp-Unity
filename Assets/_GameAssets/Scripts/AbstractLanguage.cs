@@ -72,15 +72,16 @@ namespace FasilkomUI
         protected NamedAnimancerComponent m_animancer;
         protected NamedAnimancerComponent m_animancerTongue;
         protected NamedAnimancerComponent m_animancerBody;
-        //protected Coroutine m_animancerHeadTongueCoroutine;
-        //protected Coroutine m_animancerBodyCoroutine;
         protected Coroutine m_animancerCoroutine;
+
+        protected Dictionary<string, KBBI> m_table_kbbi;
+        protected Dictionary<string, Slang> m_table_slang;
 
         #region Unity Callbacks
         protected virtual void Awake()
         {
-            // cache databases general
-            print("Jangan lupa cache Slang & KBBI");
+            m_table_kbbi = AbstractLanguageUtility.LoadDatabaseLookup<KBBIDictionary, KBBI>(m_data_kBBILookup.ToString());
+            m_table_slang = AbstractLanguageUtility.LoadDatabaseLookup<SlangDictionary, Slang>(m_data_slangLookup.ToString());
         }
         #endregion
 
@@ -98,11 +99,11 @@ namespace FasilkomUI
         {
             float fadeDuration = 0.25f;
             float noGestureAnimationWait = 1.0f;
-            
+
             AnimancerState state = m_animancerBody.States.Current;
             Coroutine headTongueAnimancerCoroutine = null;
 
-            for(int i=0; i<language_id.Count; i++)
+            for (int i = 0; i < language_id.Count; i++)
             {
                 UITextProcessing.Instance.SendTextResultToUI(i, language_id);
 
@@ -142,7 +143,7 @@ namespace FasilkomUI
         {
             var sukuSplit = suku.Split(';');
 
-            for(int i=0; i<sukuSplit.Length; i++)
+            for (int i = 0; i < sukuSplit.Length; i++)
             {
                 var headState = m_animancer.TryPlay(sukuSplit[i], fadeDuration, FadeMode.FromStart);
                 var tongueState = m_animancerTongue.TryPlay(sukuSplit[i], fadeDuration, FadeMode.FromStart);
@@ -154,7 +155,8 @@ namespace FasilkomUI
                     }
 
                     yield return new WaitForSeconds(0.1f);
-                } else
+                }
+                else
                 {
                     if (headState == null)
                         Debug.LogWarning("Animation head not found for : " + sukuSplit[i]);

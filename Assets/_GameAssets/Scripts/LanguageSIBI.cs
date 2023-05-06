@@ -67,10 +67,6 @@ namespace FasilkomUI.SIBI
                 _SearchKeyFromTable(sibiList, rawToken);
             }
 
-            //if (m_animancerHeadTongueCoroutine != null) StopCoroutine(m_animancerHeadTongueCoroutine);
-            //if (m_animancerBodyCoroutine != null) StopCoroutine(m_animancerBodyCoroutine);
-            //m_animancerHeadTongueCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancer, m_animancerTongue }, sibiList));
-            //m_animancerBodyCoroutine = StartCoroutine(_AnimationSequence(new NamedAnimancerComponent[] { m_animancerBody }, sibiList, true));
             if (m_animancerCoroutine != null) StopCoroutine(m_animancerCoroutine);
             m_animancerCoroutine = StartCoroutine(_AnimationSequence(sibiList));
         }
@@ -115,11 +111,20 @@ namespace FasilkomUI.SIBI
                 }
             }
 
-            // kbbi
-            // imbuhan kbbi
-            // slang
+            if (m_table_kbbi.ContainsKey(rawToken))
+            {
+                // split per kata aja
+                _SearchKeyFromTable(sibiList, m_table_kbbi[rawToken].sibi_id);
+                return;
+            }
 
-            if(AbstractLanguageUtility.CheckContainStrip(rawToken))
+            if (m_table_slang.ContainsKey(rawToken))
+            {
+                _SearchKeyFromTable(sibiList, m_table_slang[rawToken].formal);
+                return;
+            }
+
+            if (AbstractLanguageUtility.CheckContainStrip(rawToken))
             {
                 var majemukTokens = rawToken.Split('-', StringSplitOptions.RemoveEmptyEntries);
                 foreach (var majemukToken in majemukTokens)
