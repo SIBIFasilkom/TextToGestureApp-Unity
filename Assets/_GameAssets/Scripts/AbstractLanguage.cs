@@ -57,7 +57,6 @@ namespace FasilkomUI
         [SerializeField] protected TextAsset m_data_alt_languageLookup;
         [SerializeField] protected TextAsset[] m_data_imbuhan_languageLookup;
         [SerializeField] protected TextAsset m_data_kBBILookup;
-        [SerializeField] protected TextAsset[] m_data_imbuhan_kBBILookup;
         [SerializeField] protected TextAsset m_data_slangLookup;
 
         [Header("Animancer")]

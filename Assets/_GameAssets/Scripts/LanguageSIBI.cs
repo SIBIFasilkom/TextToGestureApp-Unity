@@ -113,8 +113,10 @@ namespace FasilkomUI.SIBI
 
             if (m_table_kbbi.ContainsKey(rawToken))
             {
-                // split per kata aja
-                _SearchKeyFromTable(sibiList, m_table_kbbi[rawToken].sibi_id);
+                var sibi_ids = m_table_kbbi[rawToken].sibi_id.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                foreach(var sibi_id in sibi_ids)
+                    _SearchKeyFromTable(sibiList, sibi_id);
+
                 return;
             }
 
