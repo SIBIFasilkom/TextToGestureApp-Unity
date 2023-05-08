@@ -114,6 +114,9 @@ namespace FasilkomUI.SIBI
             if (m_table_kbbi.ContainsKey(rawToken))
             {
                 var sibi_ids = m_table_kbbi[rawToken].sibi_id.Split(';', StringSplitOptions.RemoveEmptyEntries);
+                if (string.IsNullOrEmpty(m_table_kbbi[rawToken].sibi_id))
+                    Debug.LogWarning("This raw token is available on KBBI but have empty sibi_id : " + rawToken);
+
                 foreach(var sibi_id in sibi_ids)
                     _SearchKeyFromTable(sibiList, sibi_id);
 
