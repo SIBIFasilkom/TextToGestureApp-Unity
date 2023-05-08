@@ -15,8 +15,8 @@ namespace FasilkomUI.Editor
         [MenuItem("Fasilkom-UI/WriteFilenamesList")]
         static void WriteFilenamesAsJSON()
         {
-            string path = Application.dataPath + "/_GameAssets/Animations/_Raw (Unused For Now)/BISINDO raw/";
-            string outputPath = Application.dataPath + "/_GameAssets/Filenames_BISINDO raw.txt";
+            string path = Application.dataPath + "/_GameAssets/Animations/v1/_Raw/SIBI raw/SIBI ga tau ada di editor ini entah kenapa/";
+            string outputPath = Application.dataPath + "/_GameAssets/Filenames_SIBI raw 2.txt";
             string fileType = "fbx";
             if (string.IsNullOrWhiteSpace(path))
             {
