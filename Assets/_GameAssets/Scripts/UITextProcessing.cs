@@ -183,7 +183,7 @@ namespace FasilkomUI
 
         public void SearchButton()
         {
-            var searchText = m_uiDictionary_search_inputField.text;
+            var searchText = m_uiDictionary_search_inputField.text.ToLower();
             _HandleSearchContentChild(searchText);
         }
 
