@@ -38,7 +38,7 @@ namespace FasilkomUI
 
         private void Update()
         {
-            if (UITutorial.Instance && UITutorial.Instance.gameObject.activeSelf)
+            if (UITutorial.Instance?.gameObject.activeSelf == true && UITutorial.Instance?.currentTutorial != TutorialType.RotateCameraTutorial)
                 return;
 
             if (UITextProcessing.Instance.IsUIDictionaryActive)
@@ -49,6 +49,9 @@ namespace FasilkomUI
                 float x = Input.touches[0].deltaPosition.x * TouchSensitivity_x;
                 float yRotation = Mathf.Clamp(transform.rotation.eulerAngles.y + x, yRotationClamp.min, yRotationClamp.max);
                 transform.rotation = Quaternion.Euler(new Vector3(0.0f, yRotation, 0.0f));
+
+                if (yRotation < 165 || yRotation > 195)
+                    UITutorial.Instance?.UpdateTutorial(TutorialType.RotateCameraTutorial);
             }
             else if (Input.touchCount == 2)
             {
@@ -77,6 +80,9 @@ namespace FasilkomUI
                 float x = (Input.mousePosition.x - m_lastMousePosition.x) * MouseSensitivity_x;
                 float yRotation = Mathf.Clamp(transform.rotation.eulerAngles.y + x, yRotationClamp.min, yRotationClamp.max);
                 transform.rotation = Quaternion.Euler(new Vector3(0.0f, yRotation, 0.0f));
+
+                if (yRotation < 165 || yRotation > 195)
+                    UITutorial.Instance?.UpdateTutorial(TutorialType.RotateCameraTutorial);
             }
             else if (Input.GetMouseButton(1))
             {

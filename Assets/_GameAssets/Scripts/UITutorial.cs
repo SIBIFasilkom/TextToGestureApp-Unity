@@ -6,13 +6,24 @@ using UnityEngine.UI.Extensions;
 
 namespace FasilkomUI.Tutorial
 {
+    public enum TutorialType
+    {
+        None,
+        RotateCameraTutorial,
+        ZoomCameraTutorial,
+        SwitchCharacterTutorial,
+        GenerateTutorial,
+        AnimationSpeedTutorial,
+        DictionaryTutorial
+    }
+
     [System.Serializable]
     public class Tutorial
     {
-        [SerializeField] Sprite m_sprite;
-        public Sprite Sprite => m_sprite;
-        [SerializeField] string m_contentString;
-        public string Content => m_contentString;
+        [SerializeField] TutorialType m_tutorialType;
+        public TutorialType TutorialType => m_tutorialType;
+        [SerializeField] GameObject m_panel;
+        public GameObject Panel => m_panel;
     }
 
     public class UITutorial : MonoBehaviour
@@ -22,12 +33,7 @@ namespace FasilkomUI.Tutorial
         public const string PREF_KEY_TUTORIAL_IS_DONE = "tutorialIsDone";
 
         [SerializeField] Tutorial[] m_tutorials;
-
-        [SerializeField] HorizontalScrollSnap m_tutorialImages;
-        [SerializeField] Text m_contentText;
-        [SerializeField] Text m_countText;
-        [SerializeField] Button m_prevButton;
-        [SerializeField] Button m_nextButton;
+        public TutorialType currentTutorial { get; private set; } = TutorialType.None;
 
         private void Awake()
         {
@@ -45,17 +51,37 @@ namespace FasilkomUI.Tutorial
             gameObject.SetActive(!tutorialIsDone);
         }
 
+        private void OnEnable()
+        {
+            _SetTutorialPanel(TutorialType.RotateCameraTutorial);
+        }
+
         public void CloseButton()
         {
+            _SetTutorialPanel(TutorialType.None);
             gameObject.SetActive(false);
             PlayerPrefs.SetString(PREF_KEY_TUTORIAL_IS_DONE, true.ToString());
         }
 
-        public void UpdateTutorial()
+        public void UpdateTutorial(TutorialType tutorialType)
         {
-            int currentCount = m_tutorialImages.CurrentPage;
-            m_contentText.text = m_tutorials[currentCount].Content;
-            m_countText.text = (currentCount + 1) + "/" + m_tutorials.Length;
+            if (!gameObject.activeSelf)
+                return;
+
+            if (tutorialType != currentTutorial)
+                return;
+
+            if ((int)tutorialType + 1 >= m_tutorials.Length)
+                CloseButton();
+            else 
+                _SetTutorialPanel(tutorialType + 1);
+        }
+
+        private void _SetTutorialPanel(TutorialType tutorialType)
+        {
+            currentTutorial = tutorialType;
+            foreach (var tutorial in m_tutorials)
+                tutorial.Panel.SetActive(tutorialType == tutorial.TutorialType);
         }
     }
 }

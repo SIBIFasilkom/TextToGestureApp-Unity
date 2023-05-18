@@ -63,14 +63,14 @@ namespace FasilkomUI
         private void Update()
         {
             m_sliderZoom.value = 1 - TouchCameraControl.Instance.GenerateCameraZoomPercentage();
-
-            TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+            m_sliderSpeed.value = TextProcessing.Instance.currentSliderSpeedValue;
 
             m_wrapper.anchoredPosition = new Vector2(0.0f, m_keyboardSize * m_keyboardOpenPercentage);
             if (m_inputField.isFocused)
             {
                 m_keyboardSize = _GetKeyboardHeightRatio() * m_wrapper.rect.height;
                 m_keyboardOpenPercentage = Mathf.Min(m_keyboardOpenPercentage + Time.deltaTime * m_keyboardOpenSpeed, 1.0f);
+                // update tutorial? atau hide dulu pas generate baru update?
             } else
             {
                 m_keyboardOpenPercentage = Mathf.Max(m_keyboardOpenPercentage - Time.deltaTime * m_keyboardOpenSpeed, 0.0f);
@@ -87,12 +87,16 @@ namespace FasilkomUI
         public void GenerateButton()
         {
             TextProcessing.Instance.Generate(m_inputField.text);
+
+            UITutorial.Instance?.UpdateTutorial(TutorialType.GenerateTutorial);
         }
 
         public void ToggleCharacterButton()
         {
             m_currentChar = (m_currentChar == CharacterNames.Andi) ? CharacterNames.Aini : CharacterNames.Andi;
             TextProcessing.Instance.TriggerModel(m_currentChar.ToString());
+
+            UITutorial.Instance?.UpdateTutorial(TutorialType.SwitchCharacterTutorial);
         }
 
         public void OnSliderZoomChange()
@@ -100,11 +104,22 @@ namespace FasilkomUI
             var zoomClamp = TouchCameraControl.Instance.zoomClamp;
             float zoom = zoomClamp.min + (zoomClamp.max - zoomClamp.min) * (1 - m_sliderZoom.value);
             TouchCameraControl.Instance.UpdateAllCamerasZoom(zoom);
+
+            if(m_sliderZoom.value > 0.25)
+                UITutorial.Instance?.UpdateTutorial(TutorialType.ZoomCameraTutorial);
+        }
+
+        public void OnSliderSpeedChange()
+        {
+            TextProcessing.Instance.currentSliderSpeedValue = m_sliderSpeed.value;
+
+            if (m_sliderSpeed.value < 0.75 || m_sliderSpeed.value > 1.25)
+                UITutorial.Instance?.UpdateTutorial(TutorialType.AnimationSpeedTutorial);
         }
 
         public void BackButton()
         {
-            if(UITutorial.Instance && UITutorial.Instance.gameObject.activeSelf)
+            if(UITutorial.Instance?.gameObject.activeSelf == true)
             {
                 UITutorial.Instance.CloseButton();
                 return;
@@ -121,6 +136,9 @@ namespace FasilkomUI
 
         public void HelpButton()
         {
+            if (UITutorial.Instance?.gameObject.activeSelf == true)
+                return;
+
             UITutorial.Instance?.gameObject.SetActive(true);
         }
 
@@ -163,6 +181,8 @@ namespace FasilkomUI
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_detail.gameObject.SetActive(false);
             m_uiDictionary_search.gameObject.SetActive(true);
+
+            UITutorial.Instance?.UpdateTutorial(TutorialType.DictionaryTutorial);
         }
 
         public void OpenDictionary(string language_id)
@@ -174,6 +194,8 @@ namespace FasilkomUI
             var contentLanguage = TextProcessing.Instance.Language.GetHowToLanguage(language_id);
             m_uiDictionary_detail_titleText.text = language_id;
             m_uiDictionary_detail_contentText.text = contentLanguage;
+
+            UITutorial.Instance?.UpdateTutorial(TutorialType.DictionaryTutorial);
         }
 
         public void CloseDictionary()
