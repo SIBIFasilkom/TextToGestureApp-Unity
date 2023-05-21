@@ -21,10 +21,16 @@ namespace FasilkomUI
         [SerializeField] InputField m_uiDictionary_search_inputField;
         [SerializeField] RectTransform m_uiDictionary_search_content;
         public RectTransform UIDictionary_Search_Content => m_uiDictionary_search_content;
+        [SerializeField] ToggleGroup m_uiDictionary_search_pageContent;
+        public ToggleGroup UIDictionary_Search_PageContent => m_uiDictionary_search_pageContent;
         [SerializeField] Button m_uiDictionary_search_wordButtonPrefab;
         public Button UIDictionary_Search_WordButtonPrefab => m_uiDictionary_search_wordButtonPrefab;
+        [SerializeField] Toggle m_uiDictionary_search_pageButtonPrefab;
+        public Toggle UIDictionary_Search_PageButtonPrefab => m_uiDictionary_search_pageButtonPrefab;
         [SerializeField] int m_uiDictionary_search_perPageCount;
         public int UIDictionary_Search_PerPageCount => m_uiDictionary_search_perPageCount;
+        [SerializeField] int m_uiDictionary_search_pageCount;
+        public int UIDictionary_Search_PageCount => m_uiDictionary_search_pageCount;
 
         [SerializeField] RectTransform m_uiDictionary_detail;
         [SerializeField] Text m_uiDictionary_detail_titleText;
