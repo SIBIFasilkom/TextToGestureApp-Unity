@@ -70,7 +70,8 @@ namespace FasilkomUI
             {
                 m_keyboardSize = _GetKeyboardHeightRatio() * m_wrapper.rect.height;
                 m_keyboardOpenPercentage = Mathf.Min(m_keyboardOpenPercentage + Time.deltaTime * m_keyboardOpenSpeed, 1.0f);
-                // update tutorial? atau hide dulu pas generate baru update?
+
+                UITutorial.Instance?.UpdateTutorial(TutorialType.GenerateTutorial_Typing);
             } else
             {
                 m_keyboardOpenPercentage = Mathf.Max(m_keyboardOpenPercentage - Time.deltaTime * m_keyboardOpenSpeed, 0.0f);
@@ -88,7 +89,7 @@ namespace FasilkomUI
         {
             TextProcessing.Instance.Generate(m_inputField.text);
 
-            UITutorial.Instance?.UpdateTutorial(TutorialType.GenerateTutorial);
+            UITutorial.Instance?.UpdateTutorial(TutorialType.GenerateTutorial_Button);
         }
 
         public void ToggleCharacterButton()

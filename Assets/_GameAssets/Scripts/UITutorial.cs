@@ -12,7 +12,8 @@ namespace FasilkomUI.Tutorial
         RotateCameraTutorial,
         ZoomCameraTutorial,
         SwitchCharacterTutorial,
-        GenerateTutorial,
+        GenerateTutorial_Typing,
+        GenerateTutorial_Button,
         AnimationSpeedTutorial,
         DictionaryTutorial
     }
@@ -71,7 +72,7 @@ namespace FasilkomUI.Tutorial
             if (tutorialType != currentTutorial)
                 return;
 
-            if ((int)tutorialType + 1 >= m_tutorials.Length)
+            if ((int)tutorialType + 1 > m_tutorials.Length)
                 CloseButton();
             else 
                 _SetTutorialPanel(tutorialType + 1);
