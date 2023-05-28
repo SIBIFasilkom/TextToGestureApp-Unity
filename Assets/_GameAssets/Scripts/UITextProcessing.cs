@@ -17,6 +17,7 @@ namespace FasilkomUI
         [SerializeField] RectTransform m_uiDictionary;
         public bool IsUIDictionaryActive => m_uiDictionary.gameObject.activeSelf;
 
+        [Header("UI Dictionary - Search")]
         [SerializeField] RectTransform m_uiDictionary_search;
         [SerializeField] InputField m_uiDictionary_search_inputField;
         [SerializeField] RectTransform m_uiDictionary_search_content;
@@ -25,18 +26,24 @@ namespace FasilkomUI
         public ToggleGroup UIDictionary_Search_PageContent => m_uiDictionary_search_pageContent;
         [SerializeField] Button m_uiDictionary_search_wordButtonPrefab;
         public Button UIDictionary_Search_WordButtonPrefab => m_uiDictionary_search_wordButtonPrefab;
+        [SerializeField] Scrollbar m_uiDictionary_search_contentScrollbar;
+
+        [Header("UI Dictionary - Page")]
         [SerializeField] Toggle m_uiDictionary_search_pageButtonPrefab;
         public Toggle UIDictionary_Search_PageButtonPrefab => m_uiDictionary_search_pageButtonPrefab;
         [SerializeField] int m_uiDictionary_search_perPageCount;
         public int UIDictionary_Search_PerPageCount => m_uiDictionary_search_perPageCount;
         [SerializeField] int m_uiDictionary_search_pageCount;
         public int UIDictionary_Search_PageCount => m_uiDictionary_search_pageCount;
+        [SerializeField] Scrollbar m_uiDictionary_search_pageScrollbar;
 
+        [Header("UI Dictionary - Detail")]
         [SerializeField] RectTransform m_uiDictionary_detail;
         [SerializeField] Text m_uiDictionary_detail_titleText;
         [SerializeField] Text m_uiDictionary_detail_contentText;
 
         List<string> m_languageKeys = new List<string>();
+        List<string> m_cachedSearchedKeys = new List<string>();
 
         [Header("Bottom UI")]
         [SerializeField] Slider m_sliderZoom;
@@ -180,15 +187,16 @@ namespace FasilkomUI
         public void InitializeUIDictionaryDatabase<T>(Dictionary<string, T> languageDatabase) where T : AbstractDatabase
         {
             m_languageKeys = new List<string>(languageDatabase.Keys);
-            _HandleSearchContentChild();
         }
 
-        public void SearchDictionary()
+        public void SearchDictionary(bool clearInput)
         {
             m_uiDictionary.gameObject.SetActive(true);
             m_uiDictionary_detail.gameObject.SetActive(false);
             m_uiDictionary_search.gameObject.SetActive(true);
 
+            if (clearInput) m_uiDictionary_search_inputField.text = "";
+            SearchButton();
             UITutorial.Instance?.UpdateTutorial(TutorialType.DictionaryTutorial);
         }
 
@@ -213,7 +221,15 @@ namespace FasilkomUI
         public void SearchButton()
         {
             var searchText = m_uiDictionary_search_inputField.text.ToLower();
-            _HandleSearchContentChild(searchText);
+            StartCoroutine(_HandleSearchContentChild(searchText));
+        }
+
+        public void ChangePageButton(int page)
+        {
+            if (!m_uiDictionary_search_pageContent.transform.GetChild(page).GetComponent<Toggle>().isOn)
+                return;
+
+            _HandleSearchContentChildPage(page);
         }
 
         public void GenerateFromDictionaryButton()
@@ -241,20 +257,40 @@ namespace FasilkomUI
                 }
             }
 #else
-        return (float)TouchScreenKeyboard.area.height / Screen.height;
+            return (float)TouchScreenKeyboard.area.height / Screen.height;
 #endif
         }
 
-        private void _HandleSearchContentChild(string searchText = "")
+        private IEnumerator _HandleSearchContentChild(string searchText = "")
         {
-            // bikin coroutine, sama di up ke atas scrollbarnya tolong
+            m_cachedSearchedKeys = new List<string>();
+            for(int i=0; i<m_languageKeys.Count; i++)
+                if(m_languageKeys[i].Contains(searchText))
+                    m_cachedSearchedKeys.Add(m_languageKeys[i]);
+            
+            int pageNeeded = m_cachedSearchedKeys.Count / m_uiDictionary_search_perPageCount;
+            for (int i=0; i<m_uiDictionary_search_pageContent.transform.childCount; i++)
+                m_uiDictionary_search_pageContent.transform.GetChild(i).gameObject.SetActive(i < pageNeeded + 1);
+
+            yield return new WaitForSecondsRealtime(0.1f);
+            m_uiDictionary_search_pageScrollbar.value = 0;
+
+            _HandleSearchContentChildPage(0);
+        }
+
+        private void _HandleSearchContentChildPage(int page)
+        {
+            m_uiDictionary_search_pageContent.transform.GetChild(page).GetComponent<Toggle>().isOn = true;
+
             for (int i = 0; i < m_uiDictionary_search_content.childCount; i++)
             {
                 var wordButtonChild = m_uiDictionary_search_content.GetChild(i);
                 var wordButton = wordButtonChild.GetComponent<UIDictionaryWordButton>();
-                var isActive = i < m_languageKeys.Count && m_languageKeys[i].Contains(searchText);
-                wordButton.InitializeButton(isActive, (isActive) ? m_languageKeys[i] : "");
+                var calcIndex = page * m_uiDictionary_search_perPageCount + i;
+                var isActive = calcIndex < m_cachedSearchedKeys.Count;
+                wordButton.InitializeButton(isActive, (isActive) ? m_cachedSearchedKeys[calcIndex] : "");
             }
+            m_uiDictionary_search_contentScrollbar.value = 1;
         }
     }
 }
