@@ -27,26 +27,10 @@ namespace FasilkomUI
     }
 
     [Serializable]
-    public class KBBI : AbstractDatabase
-    {
-        public string sibi_id;
-        //public string bisindo_id;
-    }
-
-    [Serializable]
-    public class Imbuhan_KBBI : AbstractDatabase
-    {
-        public string sibi_id;
-        public string bisindo_id;
-    }
-
-    [Serializable]
     public class Slang : AbstractDatabase
     {
         public string formal;
     }
-    [Serializable] public class KBBIDictionary : AbstractDatabaseDictionary<KBBI> { }
-    [Serializable] public class ImbuhanKBBIDictionary : AbstractDatabaseDictionary<Imbuhan_KBBI> { }
     [Serializable] public class SlangDictionary : AbstractDatabaseDictionary<Slang> { }
     #endregion
 
@@ -56,7 +40,6 @@ namespace FasilkomUI
         [SerializeField] protected TextAsset m_data_languageLookup;
         [SerializeField] protected TextAsset m_data_alt_languageLookup;
         [SerializeField] protected TextAsset[] m_data_imbuhan_languageLookup;
-        [SerializeField] protected TextAsset m_data_kBBILookup;
         [SerializeField] protected TextAsset m_data_slangLookup;
 
         [Header("Animancer")]
@@ -73,13 +56,11 @@ namespace FasilkomUI
         protected NamedAnimancerComponent m_animancerBody;
         protected Coroutine m_animancerCoroutine;
 
-        protected Dictionary<string, KBBI> m_table_kbbi;
         protected Dictionary<string, Slang> m_table_slang;
 
         #region Unity Callbacks
         protected virtual void Awake()
         {
-            m_table_kbbi = AbstractLanguageUtility.LoadDatabaseLookup<KBBIDictionary, KBBI>(m_data_kBBILookup.ToString());
             m_table_slang = AbstractLanguageUtility.LoadDatabaseLookup<SlangDictionary, Slang>(m_data_slangLookup.ToString());
         }
         #endregion
