@@ -41,6 +41,8 @@ namespace FasilkomUI.SIBI
         Dictionary<string, Alt_SIBI> m_table_alt_sibi;
         Dictionary<string, Imbuhan_SIBI>[] m_table_imbuhan_sibi;
 
+        [SerializeField] bool m_debugAnimationList = false;
+
         #region Unity Callbacks
         protected override void Awake()
         {
@@ -50,10 +52,28 @@ namespace FasilkomUI.SIBI
             m_table_alt_sibi = AbstractLanguageUtility.LoadDatabaseLookup<AltSIBIDictionary, Alt_SIBI>(m_data_alt_languageLookup.ToString());
 
             m_table_imbuhan_sibi = new Dictionary<string, Imbuhan_SIBI>[m_data_imbuhan_languageLookup.Length];
-            for (int i=0; i<m_data_imbuhan_languageLookup.Length; i++)
+            for (int i = 0; i < m_data_imbuhan_languageLookup.Length; i++)
             {
                 m_table_imbuhan_sibi[i] = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[i].ToString());
             }
+
+#if UNITY_EDITOR
+            if (m_debugAnimationList)
+            {
+                string outputPath = Application.dataPath + "/_GameAssets/Animation List.txt";
+                if (m_animancerBody == null)
+                    return;
+
+                string content = "";
+                foreach (var state in m_animancerBody.States)
+                {
+                    content += state.Key.ToString() + Environment.NewLine;
+                }
+
+                Debug.Log("Animation list copied to clipboard :\n" + content);
+                GUIUtility.systemCopyBuffer = content;
+            }
+#endif
 
             UITextProcessing.Instance.InitializeUIDictionaryDatabase(m_table_sibi);
         }
@@ -62,7 +82,7 @@ namespace FasilkomUI.SIBI
         public override void ConvertToAnimationFromToken(string[] rawTokens)
         {
             List<SIBI> sibiList = new List<SIBI>();
-            foreach(string rawToken in rawTokens)
+            foreach (string rawToken in rawTokens)
             {
                 _SearchKeyFromTable(sibiList, rawToken);
             }
@@ -95,8 +115,8 @@ namespace FasilkomUI.SIBI
                 _SearchKeyFromTable(sibiList, m_table_alt_sibi[rawToken].sibi_id);
                 return;
             }
-            
-            for(int i=0; i<m_table_imbuhan_sibi.Length; i++)
+
+            for (int i = 0; i < m_table_imbuhan_sibi.Length; i++)
             {
                 if (m_table_imbuhan_sibi[i].ContainsKey(rawToken))
                 {
@@ -169,14 +189,14 @@ namespace FasilkomUI.SIBI
                 {
                     _SearchKeyFromTable(sibiList, "" + (parsedToken / 100));
                     _SearchKeyFromTable(sibiList, "-ratus");
-                    if(parsedToken % 100 > 0)
+                    if (parsedToken % 100 > 0)
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 100));
                 }
 
                 if (parsedToken >= 100 && parsedToken < 200)
                 {
                     _SearchKeyFromTable(sibiList, "100");
-                    if(parsedToken % 100 > 0)
+                    if (parsedToken % 100 > 0)
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 100));
                 }
 
@@ -188,7 +208,7 @@ namespace FasilkomUI.SIBI
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 10));
                 }
 
-                if(parsedToken >= 12 && parsedToken < 20)
+                if (parsedToken >= 12 && parsedToken < 20)
                 {
                     _SearchKeyFromTable(sibiList, "" + (parsedToken % 10));
                     _SearchKeyFromTable(sibiList, "-belas");
@@ -199,7 +219,7 @@ namespace FasilkomUI.SIBI
             if (AbstractLanguageUtility.CheckIsTimeFormat(rawToken))
             {
                 var timeTokens = rawToken.Split('.', StringSplitOptions.RemoveEmptyEntries);
-                if(timeTokens.Length == 2)
+                if (timeTokens.Length == 2)
                 {
                     _SearchKeyFromTable(sibiList, timeTokens[0]);
                     _SearchKeyFromTable(sibiList, "lebih");
@@ -212,7 +232,7 @@ namespace FasilkomUI.SIBI
             if (rawToken.Length > 1)
             {
                 var tokenSplits = AbstractLanguageUtility.SplitString(rawToken);
-                foreach(string tokenSplit in tokenSplits)
+                foreach (string tokenSplit in tokenSplits)
                     _SearchKeyFromTable(sibiList, tokenSplit);
 
                 return;

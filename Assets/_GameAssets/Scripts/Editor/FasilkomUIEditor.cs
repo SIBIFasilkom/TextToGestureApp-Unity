@@ -40,6 +40,26 @@ namespace FasilkomUI.Editor
             AssetDatabase.Refresh();
         }
 
+        public static void WriteAnimationListAsJSON<T>(Animancer.NamedAnimancerComponent animancer) where T: AbstractDatabaseLanguage
+        {
+            string outputPath = Application.dataPath + "/_GameAssets/Animation List.txt";
+            if (animancer == null)
+                return;
+
+            string content = "";
+            foreach (var state in animancer.States)
+            {
+                Debug.Log(state.DebugName);
+                content += state.DebugName + Environment.NewLine;
+            }
+
+            if (File.Exists(outputPath))
+                File.Delete(outputPath);
+
+            File.WriteAllText(outputPath, content);
+            AssetDatabase.Refresh();
+        }
+
         [MenuItem("Fasilkom-UI/SplitStringTest")]
         static void SplitStringTest()
         {
