@@ -9,15 +9,20 @@ namespace FasilkomUI
     {
         [SerializeField] Text m_text;
 
+        string m_key;
+
         public void InitializeButton(bool isUseButton, string str = "")
         {
             gameObject.SetActive(isUseButton);
-            m_text.text = str;
+
+            bool isExist = TextProcessing.Instance.Language.CheckAnimationExist(str);
+            m_key = str;
+            m_text.text = isExist ? str : "<color=red>" + str + "</color>";
         }
 
         public void OpenDictionaryButton()
         {
-            UITextProcessing.Instance.OpenDictionary(m_text.text);
+            UITextProcessing.Instance.OpenDictionary(m_key);
         }
     }
 }

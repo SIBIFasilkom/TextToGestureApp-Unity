@@ -85,7 +85,8 @@ namespace FasilkomUI
                 m_keyboardOpenPercentage = Mathf.Min(m_keyboardOpenPercentage + Time.deltaTime * m_keyboardOpenSpeed, 1.0f);
 
                 UITutorial.Instance?.UpdateTutorial(TutorialType.GenerateTutorial_Typing);
-            } else
+            }
+            else
             {
                 m_keyboardOpenPercentage = Mathf.Max(m_keyboardOpenPercentage - Time.deltaTime * m_keyboardOpenSpeed, 0.0f);
             }
@@ -119,7 +120,7 @@ namespace FasilkomUI
             float zoom = zoomClamp.min + (zoomClamp.max - zoomClamp.min) * (1 - m_sliderZoom.value);
             TouchCameraControl.Instance.UpdateAllCamerasZoom(zoom);
 
-            if(m_sliderZoom.value > 0.25)
+            if (m_sliderZoom.value > 0.25)
                 UITutorial.Instance?.UpdateTutorial(TutorialType.ZoomCameraTutorial);
         }
 
@@ -133,13 +134,13 @@ namespace FasilkomUI
 
         public void BackButton()
         {
-            if(UITutorial.Instance?.gameObject.activeSelf == true)
+            if (UITutorial.Instance?.gameObject.activeSelf == true)
             {
                 UITutorial.Instance.CloseButton();
                 return;
             }
 
-            if(IsUIDictionaryActive)
+            if (IsUIDictionaryActive)
             {
                 CloseDictionary();
                 return;
@@ -164,13 +165,13 @@ namespace FasilkomUI
 
         public void SendTextResultToUI<T>(int idx, List<T> komponenKata2) where T : AbstractDatabaseLanguage
         {
-            if(m_content.childCount < komponenKata2.Count)
+            if (m_content.childCount < komponenKata2.Count)
             {
                 Debug.LogError("UI Text Result Buttons is less than komponen kata, need at least : " + komponenKata2.Count);
                 return;
             }
 
-            for(int i=0; i<m_content.childCount; i++)
+            for (int i = 0; i < m_content.childCount; i++)
             {
                 var textResultButton = m_content.GetChild(i);
                 bool useButton = i < komponenKata2.Count;
@@ -196,7 +197,7 @@ namespace FasilkomUI
             m_uiDictionary_search.gameObject.SetActive(true);
 
             if (clearInput) m_uiDictionary_search_inputField.text = "";
-            SearchButton();
+            SearchButton(clearInput);
             UITutorial.Instance?.UpdateTutorial(TutorialType.DictionaryTutorial);
         }
 
@@ -218,10 +219,10 @@ namespace FasilkomUI
             m_uiDictionary.gameObject.SetActive(false);
         }
 
-        public void SearchButton()
+        public void SearchButton(bool resetScrollbar = true)
         {
             var searchText = m_uiDictionary_search_inputField.text.ToLower();
-            StartCoroutine(_HandleSearchContentChild(searchText));
+            StartCoroutine(_HandleSearchContentChild(searchText, resetScrollbar));
         }
 
         public void ChangePageButton(int page)
@@ -243,7 +244,7 @@ namespace FasilkomUI
         {
             if (Application.isEditor)
             {
-                return 0.4f;       
+                return 0.4f;
             }
 
 #if UNITY_ANDROID
@@ -261,24 +262,27 @@ namespace FasilkomUI
 #endif
         }
 
-        private IEnumerator _HandleSearchContentChild(string searchText = "")
+        private IEnumerator _HandleSearchContentChild(string searchText = "", bool resetScrollbar = true)
         {
             m_cachedSearchedKeys = new List<string>();
-            for(int i=0; i<m_languageKeys.Count; i++)
-                if(m_languageKeys[i].Contains(searchText))
+            for (int i = 0; i < m_languageKeys.Count; i++)
+                if (m_languageKeys[i].Contains(searchText))
                     m_cachedSearchedKeys.Add(m_languageKeys[i]);
-            
+
             int pageNeeded = m_cachedSearchedKeys.Count / m_uiDictionary_search_perPageCount;
-            for (int i=0; i<m_uiDictionary_search_pageContent.transform.childCount; i++)
+            for (int i = 0; i < m_uiDictionary_search_pageContent.transform.childCount; i++)
                 m_uiDictionary_search_pageContent.transform.GetChild(i).gameObject.SetActive(i < pageNeeded + 1);
 
-            yield return new WaitForSecondsRealtime(0.1f);
-            m_uiDictionary_search_pageScrollbar.value = 0;
+            if (resetScrollbar)
+            {
+                yield return new WaitForSecondsRealtime(0.1f);
+                m_uiDictionary_search_pageScrollbar.value = 0;
+            }
 
-            _HandleSearchContentChildPage(0);
+            _HandleSearchContentChildPage(0, resetScrollbar);
         }
 
-        private void _HandleSearchContentChildPage(int page)
+        private void _HandleSearchContentChildPage(int page, bool resetScrollbar = true)
         {
             m_uiDictionary_search_pageContent.transform.GetChild(page).GetComponent<Toggle>().isOn = true;
 
@@ -290,7 +294,9 @@ namespace FasilkomUI
                 var isActive = calcIndex < m_cachedSearchedKeys.Count;
                 wordButton.InitializeButton(isActive, (isActive) ? m_cachedSearchedKeys[calcIndex] : "");
             }
-            m_uiDictionary_search_contentScrollbar.value = 1;
+
+            if(resetScrollbar)
+                m_uiDictionary_search_contentScrollbar.value = 1;
         }
     }
 }

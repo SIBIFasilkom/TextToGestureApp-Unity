@@ -73,7 +73,10 @@ namespace FasilkomUI.SIBI
 
         public override string GetHowToLanguage(string key)
         {
-            return m_table_sibi[key].detail;
+            bool isExist = CheckAnimationExist(key);
+            string existMsg = (!isExist) ? "\n\n<color=red>*Mohon maaf, saat ini animasi untuk kata ini tidak tersedia.</color>" : "";
+
+            return m_table_sibi[key].detail + existMsg;
         }
 
         private void _SearchKeyFromTable(List<SIBI> sibiList, string rawToken)

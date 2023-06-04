@@ -75,6 +75,11 @@ namespace FasilkomUI
             m_animancerBody = (isAndi) ? _AndiBody : _AiniBody;
         }
 
+        public bool CheckAnimationExist(string key)
+        {
+            return m_animancerBody.States.TryGet(key, out _);
+        }
+
         protected IEnumerator _AnimationSequence<T>(List<T> language_id) where T : AbstractDatabaseLanguage
         {
             float fadeDuration = 0.25f;

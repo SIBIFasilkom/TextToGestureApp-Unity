@@ -79,7 +79,7 @@ namespace FasilkomUI.Editor
             string path = "Assets/_GameAssets/Database/v2/";
             //string[] fileNames = { "1-sibi.json", "2-alt_sibi.json", "3-imbuhan_sibi_generated_1.json" };
             //string[] fileNames = { "1-sibi.json", "3-imbuhan_sibi_manual_1.json", "4-imbuhan_sibi_manual_2.json", "5-imbuhan_sibi_generated_1.json", "6-imbuhan_sibi_generated_1.json" };
-            string[] fileNames = { "6-imbuhan_sibi_generated_2.json" };
+            string[] fileNames = { "1-sibi.json" };
             foreach(string fileName in fileNames)
             {
                 Debug.Log("Adding {\"list\": to "+ path + fileName);
