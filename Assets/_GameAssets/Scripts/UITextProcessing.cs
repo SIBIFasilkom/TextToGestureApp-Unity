@@ -235,6 +235,7 @@ namespace FasilkomUI
 
         public void GenerateFromDictionaryButton()
         {
+            m_inputField.text = m_uiDictionary_detail_titleText.text;
             TextProcessing.Instance.Generate(m_uiDictionary_detail_titleText.text);
             CloseDictionary();
         }
