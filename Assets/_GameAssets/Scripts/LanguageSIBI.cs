@@ -48,13 +48,13 @@ namespace FasilkomUI.SIBI
         {
             base.Awake();
 
-            m_table_sibi = AbstractLanguageUtility.LoadDatabaseLookup<SIBIDictionary, SIBI>(m_data_languageLookup.ToString());
-            m_table_alt_sibi = AbstractLanguageUtility.LoadDatabaseLookup<AltSIBIDictionary, Alt_SIBI>(m_data_alt_languageLookup.ToString());
+            m_table_sibi = AbstractLanguageUtility.LoadDatabaseLookup<SIBIDictionary, SIBI>(m_data_languageLookup.ToString(), m_debugDuplicate);
+            m_table_alt_sibi = AbstractLanguageUtility.LoadDatabaseLookup<AltSIBIDictionary, Alt_SIBI>(m_data_alt_languageLookup.ToString(), m_debugDuplicate);
 
             m_table_imbuhan_sibi = new Dictionary<string, Imbuhan_SIBI>[m_data_imbuhan_languageLookup.Length];
             for (int i = 0; i < m_data_imbuhan_languageLookup.Length; i++)
             {
-                m_table_imbuhan_sibi[i] = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[i].ToString());
+                m_table_imbuhan_sibi[i] = AbstractLanguageUtility.LoadDatabaseLookup<ImbuhanSIBIDictionary, Imbuhan_SIBI>(m_data_imbuhan_languageLookup[i].ToString(), m_debugDuplicate);
             }
 
 #if UNITY_EDITOR
@@ -150,12 +150,11 @@ namespace FasilkomUI.SIBI
             }
 
             // p.s : baru di handle sampe juta doang, belum milyar
-            // definately butuh di simplify lol
             if (AbstractLanguageUtility.CheckNeedToSplitNumeric(rawToken))
             {
                 int parsedToken = Mathf.Abs(int.Parse(rawToken));
 
-                if (parsedToken >= 2000000)
+                if (parsedToken >= 1000000)
                 {
                     _SearchKeyFromTable(sibiList, "" + (parsedToken / 1000000));
                     _SearchKeyFromTable(sibiList, "-juta");
@@ -163,14 +162,7 @@ namespace FasilkomUI.SIBI
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000000));
                 }
 
-                if (parsedToken >= 1000000 && parsedToken < 2000000)
-                {
-                    _SearchKeyFromTable(sibiList, "1000000");
-                    if (parsedToken % 1000000 > 0)
-                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000000));
-                }
-
-                if (parsedToken >= 2000 && parsedToken < 1000000)
+                if (parsedToken >= 1000 && parsedToken < 1000000)
                 {
                     _SearchKeyFromTable(sibiList, "" + (parsedToken / 1000));
                     _SearchKeyFromTable(sibiList, "-ribu");
@@ -178,24 +170,10 @@ namespace FasilkomUI.SIBI
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000));
                 }
 
-                if (parsedToken >= 1000 && parsedToken < 2000)
-                {
-                    _SearchKeyFromTable(sibiList, "1000");
-                    if (parsedToken % 1000 > 0)
-                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 1000));
-                }
-
-                if (parsedToken >= 200 && parsedToken < 1000)
+                if (parsedToken >= 100 && parsedToken < 1000)
                 {
                     _SearchKeyFromTable(sibiList, "" + (parsedToken / 100));
                     _SearchKeyFromTable(sibiList, "-ratus");
-                    if (parsedToken % 100 > 0)
-                        _SearchKeyFromTable(sibiList, "" + (parsedToken % 100));
-                }
-
-                if (parsedToken >= 100 && parsedToken < 200)
-                {
-                    _SearchKeyFromTable(sibiList, "100");
                     if (parsedToken % 100 > 0)
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 100));
                 }
@@ -206,12 +184,6 @@ namespace FasilkomUI.SIBI
                     _SearchKeyFromTable(sibiList, "-puluh");
                     if (parsedToken % 10 > 0)
                         _SearchKeyFromTable(sibiList, "" + (parsedToken % 10));
-                }
-
-                if (parsedToken >= 12 && parsedToken < 20)
-                {
-                    _SearchKeyFromTable(sibiList, "" + (parsedToken % 10));
-                    _SearchKeyFromTable(sibiList, "-belas");
                 }
                 return;
             }

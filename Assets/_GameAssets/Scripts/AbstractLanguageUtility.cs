@@ -18,7 +18,7 @@ namespace FasilkomUI
          * U : GKS contohnya Gesture
          * </summary>
          */
-        public static Dictionary<string, U> LoadDatabaseLookup<T, U>(string jsonData) where T : AbstractDatabaseDictionary<U> where U : AbstractDatabase
+        public static Dictionary<string, U> LoadDatabaseLookup<T, U>(string jsonData, bool debugDuplicate = false) where T : AbstractDatabaseDictionary<U> where U : AbstractDatabase
         {
             T tempList = JsonUtility.FromJson<T>(jsonData);
             Dictionary<string, U> tableLookup = new Dictionary<string, U>();
@@ -26,7 +26,10 @@ namespace FasilkomUI
             {
                 if(tableLookup.ContainsKey(skg.id))
                 {
-                    Debug.LogWarning("Loading " + skg.GetType() + " : " + skg.id + " is duplicated & has already been added, skipping... ");
+#if UNITY_EDITOR
+                    if(debugDuplicate)
+                        Debug.LogWarning("Loading " + skg.GetType() + " : " + skg.id + " is duplicated & has already been added, skipping... ");
+#endif
                     continue;
                 }
 
